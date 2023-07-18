@@ -1,0 +1,19 @@
+﻿// Base spacing unit
+$spacing-unit: 16px;
+
+// Spacing variables
+$spacing-normal: $spacing-unit;
+$spacing-small: calc($spacing-unit / 2);
+$spacing-smaller: calc($spacing-unit / 3);
+$spacing-large: calc($spacing-unit * 2);
+$spacing-larger: calc($spacing-unit * 3);
+$spacing-largest: calc($spacing-unit * 5);
+
+// Colors
+$color-dark: #313136;
+$color-darker: #1e1e20;
+$color-light: #8e8e93;
+$color-lighter: #e3e3e5;
+$color-primary: #10b981;
+$color-secondary: #fb7185;
+$color-accent: #fbbf24;

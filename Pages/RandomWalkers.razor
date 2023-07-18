@@ -1,0 +1,22 @@
+﻿@attribute [Route(Routes.RandomWalkers)]
+
+<h3>RandomWalkers page</h3>
+
+@((MarkupString)stuff())
+
+<canvas width="500" height="500">
+</canvas>
+
+
+
+@code {
+    string stuff()
+    {
+        var html = @"
+<h1>some stuff brudda</h1>
+    <script>
+    console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
+    </script>";
+        return html;
+    }
+}
