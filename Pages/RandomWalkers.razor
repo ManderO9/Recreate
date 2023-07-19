@@ -1,22 +1,31 @@
 ﻿@attribute [Route(Routes.RandomWalkers)]
+@inject IJSRuntime jsRuntime
 
-<h3>RandomWalkers page</h3>
-
-@((MarkupString)stuff())
-
-<canvas width="500" height="500">
+<canvas width="@CanvasWidth" height="@CanvasHeight" id="random-walkers-canvas">
 </canvas>
 
 
-
 @code {
-    string stuff()
+    const int CanvasWidth = 600;
+    const int CanvasHeight = 500;
+
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var html = @"
-<h1>some stuff brudda</h1>
-    <script>
-    console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
-    </script>";
-        return html;
+        var module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/RandomWalkers.razor.js");
+        var size = CanvasWidth * CanvasHeight * 4;
+
+        var data = new byte[size];
+
+        for(var i = 0; i < data.Length; i += 4)
+        {
+            // Modify pixel data
+            data[i + 0] = 190; // R value
+            data[i + 1] = 0; // G value
+            data[i + 2] = 210; // B value
+            data[i + 3] = 255; // A value
+        }
+
+        await module.InvokeVoidAsync("drawImage", data);
     }
 }
