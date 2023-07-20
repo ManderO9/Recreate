@@ -6,10 +6,10 @@
 
 
 @code {
-    const int CanvasWidth = 600;
+    const int CanvasWidth = 700;
     const int CanvasHeight = 500;
 
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/RandomWalkers.razor.js");
