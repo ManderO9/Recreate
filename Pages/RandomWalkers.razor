@@ -4,45 +4,4 @@
 <canvas width="@CanvasWidth" height="@CanvasHeight" id="random-walkers-canvas">
 </canvas>
 
-@code {
-    const int CanvasWidth = 700;
-    const int CanvasHeight = 500;
-    public byte[] Screen = new byte[CanvasWidth * CanvasHeight * 4];
-    public System.Timers.Timer? Timer;
-    IJSObjectReference? JSModule;
 
-    protected override void OnInitialized()
-    {
-        Timer = new System.Timers.Timer();
-
-        Timer.Interval = 1000 / 4;
-        
-        Timer.Elapsed += async (s, e) =>
-        {
-
-            for(var i = 0; i < Screen.Length; i += 4)
-            {
-                // Modify pixel data
-                Screen[i + 0] = 190; // R value
-                Screen[i + 1] = 0; // G value
-                Screen[i + 2] = (byte)(210 * Random.Shared.Next(9)); // B value
-                Screen[i + 3] = 255; // A value
-            }
-            await Draw(Screen);
-        };
-        
-        Timer.Start();
-    }
-
-    async Task Draw(byte[] screen)
-    {
-        if (JSModule is null)
-        {
-            JSModule =  await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/RandomWalkers.razor.js");
-            await JSModule.InvokeVoidAsync("drawImage", screen);
-        }
-        else
-            await JSModule.InvokeVoidAsync("drawImage", screen);
-    }
-
-}
