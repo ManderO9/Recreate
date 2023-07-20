@@ -1,7 +1,21 @@
 ﻿@attribute [Route(Routes.RandomWalkers)]
 @inject IJSRuntime jsRuntime
 
-<canvas width="@CanvasWidth" height="@CanvasHeight" id="random-walkers-canvas">
+<div>
+    <button @onclick="PauseResume">
+        @if(mRunning)
+        {
+            <text>Pause</text>
+        }
+        else
+        {
+            <text>Resume</text>
+        }
+    </button>
+</div>
+
+<canvas width="@CanvasWidth"
+        height="@CanvasHeight"
+        id="random-walkers-canvas"
+        @onclick="(eventArgs)=>AddPoint((uint)eventArgs.OffsetX, (uint)eventArgs.OffsetY)">
 </canvas>
-
-

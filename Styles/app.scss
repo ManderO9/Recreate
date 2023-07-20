@@ -25,17 +25,14 @@ nav {
     height: 100vh;
     width: $spacing-largest * 3;
     padding: $spacing-large;
-    
     // Page links
     > a {
         margin-bottom: $spacing-small;
         display: block;
         color: $color-lighter;
         text-decoration: none;
-        
-        padding-bottom:$spacing-small;
-        border-bottom:2px solid $color-dark;
-
+        padding-bottom: $spacing-small;
+        border-bottom: 2px solid $color-dark;
         // When the link is clicked
         &.active {
             color: $color-primary;
@@ -50,4 +47,13 @@ nav {
     color: $color-lighter;
     display: flex;
     flex-direction: row;
+}
+
+
+#random-walkers-canvas {
+    transform: scale(4,4);
+    transform-origin: top left;
+
+    image-rendering: pixelated;
+    image-rendering: optimizeSpeed;
 }

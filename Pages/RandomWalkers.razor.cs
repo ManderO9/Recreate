@@ -1,5 +1,5 @@
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using System.Numerics;
 
 namespace Recreate.Pages
 {
@@ -10,12 +10,12 @@ namespace Recreate.Pages
         /// <summary>
         /// The width of the canvas in pixels
         /// </summary>
-        const int CanvasWidth = 700;
+        const int CanvasWidth = 175;
 
         /// <summary>
         /// The height of the canvas in pixels
         /// </summary>
-        const int CanvasHeight = 500;
+        const int CanvasHeight = 125;
 
         /// <summary>
         /// The length in bytes of the pixels arrays we display on the canvas
@@ -45,6 +45,11 @@ namespace Recreate.Pages
         /// Create the list of points to display in the screen
         /// </summary>
         private List<Point> mPoints = new List<Point>();
+
+        /// <summary>
+        /// Whether the game loop is running or not
+        /// </summary>
+        private bool mRunning = false;
 
         #endregion
 
@@ -84,16 +89,8 @@ namespace Recreate.Pages
             // Start the timer
             mTimer.Start();
 
-
-            mPoints.Add(new Point(0, 0, 234, 233, 12, 255));
-            mPoints.Add(new Point(220, 220, 2, 233, 12, 255));
-            mPoints.Add(new Point(032, 023, 4, 233, 12, 255));
-            mPoints.Add(new Point(430, 420, 234, 3, 12, 255));
-            mPoints.Add(new Point(230, 120, 2, 233, 233, 255));
-            mPoints.Add(new Point(230, 0322, 2, 3, 233, 255));
-
-
-
+            // Set running to true
+            mRunning = true;
         }
 
         #region Private Methods
@@ -101,7 +98,7 @@ namespace Recreate.Pages
         /// <summary>
         /// Runs every frame to update the state of the game
         /// </summary>
-        void Update()
+        private void Update()
         {
             // For each point in the list of points we display
             for(var i = 0; i < mPoints.Count; i++)
@@ -132,10 +129,44 @@ namespace Recreate.Pages
         /// Draws the pixels array into the canvas
         /// </summary>
         /// <returns></returns>
-        async Task Draw()
+        private async Task Draw()
         {
             // Call the javascript method passing in the pixels array
             await mJSModule.InvokeVoidAsync("drawImage", mScreen);
+        }
+
+        /// <summary>
+        /// Stops the running game loop or resumes it accordingly
+        /// </summary>
+        private void PauseResume()
+        {
+            // If the game is running
+            if(mRunning)
+            {
+                // Set running to false
+                mRunning = false;
+
+                // Stop the timer callbacks
+                mTimer?.Stop();
+            }
+            // Otherwise...
+            else
+            {
+                // Set running to true
+                mRunning = true;
+
+                // Start the timer callbacks again
+                mTimer?.Start();
+            }
+        }
+
+
+        public void AddPoint(uint x, uint y)
+        {
+            mPoints.Add(new Point(x, y,
+                (byte)Random.Shared.Next(255),
+                (byte)Random.Shared.Next(255),
+                (byte)Random.Shared.Next(255), 255));
         }
 
         #endregion
