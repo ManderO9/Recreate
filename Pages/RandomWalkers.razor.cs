@@ -55,7 +55,7 @@ namespace Recreate.Pages
         /// The current mouse position
         /// </summary>
         private (uint X, uint Y) mMousePosition;
-        
+
         /// <summary>
         /// Whether we are adding points to the list of points or not
         /// </summary>
@@ -75,15 +75,8 @@ namespace Recreate.Pages
             // Set the interval to run 30 times per second
             mTimer.Interval = 1000 / 30;
 
-            // Set the initial value of the pixels to be all black
-            for(var i = 0; i < mScreen.Length; i += 4)
-            {
-                // Set each pixel value
-                mScreen[i + 0] = 0X22; // R value
-                mScreen[i + 1] = 0X22; // G value
-                mScreen[i + 2] = 0X22; // B value
-                mScreen[i + 3] = 255; // A value
-            }
+            // Set default screen pixels
+            ClearScreen();
 
             // Each time the set interval elapses
             mTimer.Elapsed += async (s, e) =>
@@ -104,10 +97,27 @@ namespace Recreate.Pages
             // Set running to true
             mRunning = true;
         }
-        
+
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        /// Sets the pixels in the screen to the default value
+        /// </summary>
+        private void ClearScreen()
+        {
+            // Set the initial value of the pixels to be all dark gray
+            for(var i = 0; i < mScreen.Length; i += 4)
+            {
+                // Set each pixel value
+                mScreen[i + 0] = 0X22; // R value
+                mScreen[i + 1] = 0X22; // G value
+                mScreen[i + 2] = 0X22; // B value
+                mScreen[i + 3] = 255; // A value
+            }
+
+        }
 
         /// <summary>
         /// Runs every frame to update the state of the game
@@ -227,6 +237,24 @@ namespace Recreate.Pages
                 (byte)Random.Shared.Next(255),
                 (byte)Random.Shared.Next(255),
                 (byte)Random.Shared.Next(255), 255));
+        }
+
+        /// <summary>
+        /// Deletes all the points from the list of points and resets the screen into default pixels
+        /// </summary>
+        /// <returns>A Task representing the asynchronous operation</returns>
+        private async Task ClearPoints()
+        {
+            // Clear the list of points
+            mPoints.Clear();
+
+            // Reset screen color
+            ClearScreen();
+
+            // If the game is not running
+            if(!mRunning)
+                // Draw a single frame to reset the canvas
+                await Draw();
         }
 
         #endregion
