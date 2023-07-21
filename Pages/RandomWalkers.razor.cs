@@ -10,12 +10,12 @@ namespace Recreate.Pages
         /// <summary>
         /// The width of the canvas in pixels
         /// </summary>
-        const int CanvasWidth = 175;
+        const int CanvasWidth = 350;
 
         /// <summary>
         /// The height of the canvas in pixels
         /// </summary>
-        const int CanvasHeight = 125;
+        const int CanvasHeight = 250;
 
         /// <summary>
         /// The length in bytes of the pixels arrays we display on the canvas
@@ -60,6 +60,23 @@ namespace Recreate.Pages
         /// Whether we are adding points to the list of points or not
         /// </summary>
         private bool mAddingEnabled = false;
+
+        #endregion
+
+        #region IDisposable Implementation
+
+        ValueTask IAsyncDisposable.DisposeAsync()
+        {
+            // Stop the timer
+            mTimer?.Stop();
+
+            // Clear it's resources
+            mTimer?.Close();
+            mTimer = null;
+
+            // Clear js module resources
+            return mJSModule.DisposeAsync();
+        }
 
         #endregion
 
@@ -128,7 +145,6 @@ namespace Recreate.Pages
             for(var i = 0; i < mPoints.Count; i++)
             {
                 // TODO: fix this code, it contains bugs
-
 
                 // Get the point
                 var point = mPoints[i];

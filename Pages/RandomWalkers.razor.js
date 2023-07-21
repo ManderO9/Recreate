@@ -1,7 +1,12 @@
-const canvas = document.querySelector("#random-walkers-canvas");
-const context = canvas.getContext("2d");
 
 export function drawImage(data) {
+
+    // Get the canvas to draw on
+    var canvas = document.querySelector("#random-walkers-canvas");
+
+    // Get the canvas 2d context
+    var context = canvas.getContext("2d");
+
     // Create a clamped array from the byte array passed in
     var clampedArray = Uint8ClampedArray.from(data);
 

@@ -1,5 +1,6 @@
 ﻿@attribute [Route(Routes.RandomWalkers)]
 @inject IJSRuntime jsRuntime
+@implements IAsyncDisposable
 
 <div>
     <button @onclick="PauseResume">
