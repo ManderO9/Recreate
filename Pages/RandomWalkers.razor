@@ -1,28 +1,28 @@
 ﻿@attribute [Route(Routes.RandomWalkers)]
 @inject IJSRuntime jsRuntime
 @implements IAsyncDisposable
+<div class="random-walkers">
+    <h2>Random Walkers</h2>
+    <div>
+        <p>Click with your mouse inside the rectangle and drag around to add particles and watch them spread in random directions, 
+            click on Pause to stop the particles movement or resume it, and click Clear to clear the screen.</p>
+    </div>
 
-<div>
-    <button @onclick="PauseResume">
-        @if(mRunning)
-        {
-            <text>Pause</text>
-        }
-        else
-        {
-            <text>Resume</text>
-        }
-    </button>
-    <button
-        @onclick="ClearPoints"    
-    >Clear</button>
+    <div class="buttons">
+        <button @onclick="PauseResume" class="button @(mRunning ? "button-accent":"button-primary")">
+            @(mRunning ? "Pause" : "Resume")
+        </button>
+        <button @onclick="ClearPoints" class="button button-secondary">
+            Clear
+        </button>
+    </div>
+
+    <canvas width="@CanvasWidth"
+            height="@CanvasHeight"
+            id="random-walkers-canvas"
+            @onmousedown="(e)=>{StartAdding((uint)e.OffsetX,(uint)e.OffsetY);}"
+            @onmouseup="(e)=>{StopAdding();}"
+            @onmousemove="(e)=>{ if(mAddingEnabled) ChangedPosition((uint)e.OffsetX,(uint)e.OffsetY);}"
+            @onmouseleave="(e)=>{StopAdding();}">
+    </canvas>
 </div>
-
-<canvas width="@CanvasWidth"
-        height="@CanvasHeight"
-        id="random-walkers-canvas"
-        @onmousedown="(e)=>{StartAdding((uint)e.OffsetX,(uint)e.OffsetY);}"
-        @onmouseup="(e)=>{StopAdding();}"
-        @onmousemove="(e)=>{ if(mAddingEnabled) ChangedPosition((uint)e.OffsetX,(uint)e.OffsetY);}"
-        @onmouseleave="(e)=>{StopAdding();}">
-</canvas>

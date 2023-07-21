@@ -22,9 +22,16 @@ select:focus {
 // Navbar
 nav {
     background: $color-darker;
-    height: 100vh;
     width: $spacing-largest * 3;
     padding: $spacing-large;
+    height: 100vh;
+    
+    // Fixed position to the left
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    
     // Page links
     > a {
         margin-bottom: $spacing-small;
@@ -33,6 +40,7 @@ nav {
         text-decoration: none;
         padding-bottom: $spacing-small;
         border-bottom: 2px solid $color-dark;
+
         // When the link is clicked
         &.active {
             color: $color-primary;
@@ -45,15 +53,80 @@ nav {
 .layout-container {
     background-color: $color-dark;
     color: $color-lighter;
-    display: flex;
-    flex-direction: row;
+
+    // Main page content
+    > main {
+        // Margin equal to the width of the sidebar
+        margin-left: $spacing-largest * 3;
+
+        padding-top:$spacing-normal;
+    }
+}
+
+// Titles
+h2 {
+    margin: $spacing-normal $spacing-large;
+    color: $color-secondary;
+    font-size: larger;
+}
+
+// Paragraphs
+p {
+    margin: $spacing-normal $spacing-large;
+}
+
+// Random walkers page
+.random-walkers {
+    padding-bottom: $spacing-largest*4;
+
+    > div {
+        padding: 0 $spacing-large;
+    }
+
+    // Control buttons
+    > .buttons {
+        margin-bottom: $spacing-large;
+        margin-right: $spacing-large;
+        text-align: right;
+
+        >button{
+            margin-right:$spacing-normal;
+        }
+    }
+
+    // Canvas
+    > #random-walkers-canvas {
+        transform: scale(2,2);
+        transform-origin: top left;
+        image-rendering: pixelated;
+        image-rendering: optimizeSpeed;
+        margin-left: $spacing-large;
+    }
 }
 
 
-#random-walkers-canvas {
-    transform: scale(2,2);
-    transform-origin: top left;
+// Button styles
+.button {
+    padding: $spacing-small $spacing-normal;
+    border: none;
+    border-radius: $spacing-smaller;
+    text-shadow: 1px 1px 2px $color-dark;
+}
 
-    image-rendering: pixelated;
-    image-rendering: optimizeSpeed;
+// Primary button
+.button-primary {
+    background-color: $color-primary;
+    color: $color-lighter;
+}
+
+// Secondary button
+.button-secondary{
+    background-color: $color-secondary;
+    color:$color-lighter;
+}
+
+// Accent button
+.button-accent{
+    background-color: $color-accent;
+    color: $color-lighter;
 }
