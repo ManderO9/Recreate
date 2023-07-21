@@ -51,7 +51,19 @@ namespace Recreate.Pages
         /// </summary>
         private bool mRunning = false;
 
+        /// <summary>
+        /// The current mouse position
+        /// </summary>
+        private (uint X, uint Y) mMousePosition;
+        
+        /// <summary>
+        /// Whether we are adding points to the list of points or not
+        /// </summary>
+        private bool mAddingEnabled = false;
+
         #endregion
+
+        #region LifeCycle Methods
 
         protected override async Task OnInitializedAsync()
         {
@@ -92,6 +104,8 @@ namespace Recreate.Pages
             // Set running to true
             mRunning = true;
         }
+        
+        #endregion
 
         #region Private Methods
 
@@ -121,6 +135,13 @@ namespace Recreate.Pages
                 mScreen[offset + 1] = point.G; // G value
                 mScreen[offset + 2] = point.B; // B value
                 mScreen[offset + 3] = point.A; // A value
+            }
+
+            // If we are adding points to the list
+            if(mAddingEnabled)
+            {
+                // Add a new one at the current mouse position
+                AddPoint(mMousePosition.X, mMousePosition.Y);
             }
 
         }
@@ -160,9 +181,48 @@ namespace Recreate.Pages
             }
         }
 
-
-        public void AddPoint(uint x, uint y)
+        /// <summary>
+        /// Starts adding points to the current mouse position
+        /// </summary>
+        /// <param name="x">The x coordinate of the mouse position</param>
+        /// <param name="y">The y coordinate of the mouse position</param>
+        private void StartAdding(uint x, uint y)
         {
+            // Set flag for adding points to true
+            mAddingEnabled = true;
+
+            // Set the current mouse position
+            mMousePosition = (x, y);
+        }
+
+        /// <summary>
+        /// Stops adding points to the screen 
+        /// </summary>
+        private void StopAdding()
+        {
+            // Set adding points flag to false
+            mAddingEnabled = false;
+        }
+
+        /// <summary>
+        /// Changes the position of the mouse
+        /// </summary>
+        /// <param name="x">The x coordinate of the mouse position</param>
+        /// <param name="y">The y coordinate of the mouse position</param>
+        private void ChangedPosition(uint x, uint y)
+        {
+            // Change mouse position
+            mMousePosition = (x, y);
+        }
+
+        /// <summary>
+        /// Adds a point to the list of points with a specified positino and random color
+        /// </summary>
+        /// <param name="x">The x position of the point</param>
+        /// <param name="y">The y position of the point</param>
+        private void AddPoint(uint x, uint y)
+        {
+            // Add a point to the list of points
             mPoints.Add(new Point(x, y,
                 (byte)Random.Shared.Next(255),
                 (byte)Random.Shared.Next(255),

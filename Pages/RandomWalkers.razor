@@ -17,5 +17,8 @@
 <canvas width="@CanvasWidth"
         height="@CanvasHeight"
         id="random-walkers-canvas"
-        @onclick="(eventArgs)=>AddPoint((uint)eventArgs.OffsetX, (uint)eventArgs.OffsetY)">
+        @onmousedown="(e)=>{StartAdding((uint)e.OffsetX,(uint)e.OffsetY);}"
+        @onmouseup="(e)=>{StopAdding();}"
+        @onmousemove="(e)=>{ if(mAddingEnabled) ChangedPosition((uint)e.OffsetX,(uint)e.OffsetY);}"
+        @onmouseleave="(e)=>{StopAdding();}">
 </canvas>
