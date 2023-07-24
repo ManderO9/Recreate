@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace Recreate.Pages
@@ -61,6 +60,11 @@ namespace Recreate.Pages
         /// </summary>
         private bool mAddingEnabled = false;
 
+        /// <summary>
+        /// The current type of modification we apply to a point to change it's position
+        /// </summary>
+        Func<uint, uint, (long, long)> mCurrentMethod  = default!;
+
         #endregion
 
         #region IDisposable Implementation
@@ -85,6 +89,9 @@ namespace Recreate.Pages
         protected override async Task OnInitializedAsync()
         {
             // When the element gets initialized
+
+            // Set default method for updating points position
+            mCurrentMethod = RandomMethod;
 
             // Initiate the timer
             mTimer = new();
@@ -144,14 +151,11 @@ namespace Recreate.Pages
             // For each point in the list of points we display
             for(var i = 0; i < mPoints.Count; i++)
             {
-                // TODO: fix this code, it contains bugs
-
                 // Get the point
                 var point = mPoints[i];
 
-                // Add a random offset to it's position
-                point.X = (uint)((point.X + Random.Shared.Next(-1, 2)) % CanvasWidth);
-                point.Y = (uint)((point.Y + Random.Shared.Next(-1, 2)) % CanvasHeight);
+                // Update the point position
+                UpdatePointPosition(point);
 
                 // Calculate the offset in the pixels array to display the pixel in
                 var offset = ((point.Y * CanvasWidth + point.X) * 4) % ScreenSize;
@@ -272,6 +276,70 @@ namespace Recreate.Pages
                 // Draw a single frame to reset the canvas
                 await Draw();
         }
+
+        /// <summary>
+        /// Updates The current position of the point according to a specific method
+        /// </summary>
+        /// <param name="point">The point that we want to update the position for</param>
+        private void UpdatePointPosition(Point point)
+        {
+            // Get the new value of the x and y coordinates of the point
+            var (newX, newY) = mCurrentMethod(point.X, point.Y);
+
+            // Bound the x value between 0 and canvas width
+            if(newX < 0) newX = CanvasWidth - 1;
+            if(newX >= CanvasWidth) newX = 0;
+            
+            // Bound the y value between 0 and canvas height
+            if(newY < 0) newY = CanvasHeight - 1;
+            if(newY >= CanvasHeight) newY = 0;
+
+            // Set the new coordinates of the point
+            point.X = (uint)newX;
+            point.Y = (uint)newY;
+        }
+
+        #endregion
+
+        #region Point Update Methods
+
+        /// <summary>
+        /// Updates the point position randomly by adding or subtracting 1 to it's coordinates
+        /// </summary>
+        /// <param name="x">The old x coordinate of the point</param>
+        /// <param name="y">The old y coordinate of the point</param>
+        /// <returns>The new updated x and y coordinates</returns>
+        private (long x, long y) RandomMethod(uint x, uint y)
+            // Add a random offset to it's position
+            => (x + Random.Shared.Next(-1, 2), y + Random.Shared.Next(-1, 2));
+
+        /// <summary>
+        /// Updates the point position by subtracting 1 to it's y value making it go up
+        /// </summary>
+        /// <param name="x">The old x coordinate of the point</param>
+        /// <param name="y">The old y coordinate of the point</param>
+        /// <returns>The new updated x and y coordinates</returns>
+        private (long x, long y) GracefulMethod(uint x, uint y) => (x, (long)y - 1);
+
+        /// <summary>
+        /// Makes the points move randomly but in patterns that look like disco lights
+        /// </summary>
+        /// <param name="x">The old x coordinate of the point</param>
+        /// <param name="y">The old y coordinate of the point</param>
+        /// <returns>The new updated x and y coordinates</returns>
+        private (long x, long y) DiscoMethod(uint x, uint y)
+            => (x + Random.Shared.Next(-1, 2) % CanvasWidth * 2,
+            y + Random.Shared.Next(-1, 2) % CanvasHeight * 2);
+
+        /// <summary>
+        /// Fills up the screen with random points that will move around in interesting patterns
+        /// </summary>
+        /// <param name="x">The old x coordinate of the point</param>
+        /// <param name="y">The old y coordinate of the point</param>
+        /// <returns>The new updated x and y coordinates</returns>
+        private (long x, long y) LightsBrightMethod(uint x, uint y)
+            => (x + Random.Shared.Next(-1, 2) % CanvasWidth * 2,
+            y + Random.Shared.Next(-1, 2) % CanvasHeight * 16);
 
         #endregion
     }

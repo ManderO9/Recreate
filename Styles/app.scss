@@ -82,18 +82,25 @@ p {
     > div {
         padding: 0 $spacing-large;
     }
-
     // Control buttons
     > .buttons {
         margin-bottom: $spacing-large;
         margin-right: $spacing-large;
         text-align: right;
 
-        >button{
-            margin-right:$spacing-normal;
+        > button {
+            margin-right: $spacing-normal;
+        }
+
+        > select {
+            background: $color-dark;
+            border: 1px solid $color-light;
+            border-radius: $spacing-small;
+            padding: $spacing-small;
+            margin: 0 $spacing-normal 0 0;
+            color: $color-lighter;
         }
     }
-
     // Canvas
     > #random-walkers-canvas {
         transform: scale(2,2);
