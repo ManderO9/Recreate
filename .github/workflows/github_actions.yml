@@ -1,0 +1,33 @@
+name: deploy to Github Pages
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy-to-github-pages:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+        
+    - name: Install .NET WASM Build Tools
+      run: dotnet workload install wasm-tools 
+        
+    # publishes project to the release folder
+    - name: Publish .Net Core Project
+      run: dotnet publish Recreate/Recreate.csproj -c Release -o release --nologo -p:GHPages=true
+      
+    - name: Commit wwwroot to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      with:
+        GITHUb_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: release/wwwroot
