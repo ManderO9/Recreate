@@ -1,11 +1,11 @@
 ﻿<nav>
-    <NavLink href="@Routes.Home" Match="NavLinkMatch.All">
+    <NavLink href="@(Routes.RoutePrefix + Routes.Home)" Match="NavLinkMatch.All">
         Home
     </NavLink>
-    <NavLink href="@Routes.RandomWalkers">
+    <NavLink href="@(Routes.RoutePrefix + Routes.RandomWalkers)">
         Random Walkers
     </NavLink>
-    <NavLink href="@Routes.Credits">
+    <NavLink href="@(Routes.RoutePrefix + Routes.Credits)">
         Credits
     </NavLink>
 </nav>

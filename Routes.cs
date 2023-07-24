@@ -2,6 +2,8 @@
 
 public class Routes
 {
+    public static string RoutePrefix = "";
+
     public const string RandomWalkers = "/random_walkers";
 
     public const string Home = "/";
