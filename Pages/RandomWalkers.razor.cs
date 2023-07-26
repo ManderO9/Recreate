@@ -63,7 +63,7 @@ namespace Recreate.Pages
         /// <summary>
         /// The current type of modification we apply to a point to change it's position
         /// </summary>
-        Func<uint, uint, (long, long)> mCurrentMethod  = default!;
+        Func<uint, uint, (long, long)> mCurrentMethod = default!;
 
         #endregion
 
@@ -289,7 +289,7 @@ namespace Recreate.Pages
             // Bound the x value between 0 and canvas width
             if(newX < 0) newX = CanvasWidth - 1;
             if(newX >= CanvasWidth) newX = 0;
-            
+
             // Bound the y value between 0 and canvas height
             if(newY < 0) newY = CanvasHeight - 1;
             if(newY >= CanvasHeight) newY = 0;
@@ -340,6 +340,39 @@ namespace Recreate.Pages
         private (long x, long y) LightsBrightMethod(uint x, uint y)
             => (x + Random.Shared.Next(-1, 2) % CanvasWidth * 2,
             y + Random.Shared.Next(-1, 2) % CanvasHeight * 16);
+
+        /// <summary>
+        /// Updates the point position making it move in a spiral trajectory 
+        /// /// </summary>
+        /// <param name="x">The old x coordinate of the point</param>
+        /// <param name="y">The old y coordinate of the point</param>
+        /// <returns>The new updated x and y coordinates</returns>
+        private (long x, long y) SpiralMethod(uint x, uint y)
+        {
+            // Divide the value of x and y by two and subtract the center of the canvas
+            // To make them take half the space and be offset to the center of the canvas
+            var halfX = (int)x - CanvasWidth / 2;
+            var halfY = (int)y - CanvasHeight / 2;
+
+            // Calculate the distance from the center of the canvas
+            var r = Math.Sqrt(halfX * halfX + halfY * halfY);
+
+            // Calculate the angle from the center of the canvas
+            var fi = Math.Atan2(halfY, halfX);
+
+            // Add a random distance to the point
+            r += Random.Shared.Next(0,3);
+
+            // Add a random offset to the angle of the point
+            fi += Random.Shared.NextSingle() * 0.1;
+
+            // Calculate the new coordinates from the updated distance an angle
+            var newX = (long)(r * Math.Cos(fi)) + (CanvasWidth / 2);
+            var newY = (long)(r * Math.Sin(fi)) + (CanvasHeight / 2);
+
+            // Return the result
+            return (newX, newY);
+        }
 
         #endregion
     }

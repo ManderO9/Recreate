@@ -17,3 +17,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();
+
+
+// TODO: start working on boids
+// TODO: add credits to the guy in the credits page
+// TODO: think of something to put in the home page
+// TODO: add a loading screen for the website

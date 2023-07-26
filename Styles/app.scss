@@ -22,7 +22,7 @@ select:focus {
 // Navbar
 nav {
     background: $color-darker;
-    width: $spacing-largest * 3;
+    width: $spacing-largest * 3 + $spacing-large;
     padding: $spacing-large;
     height: 100vh;
     
@@ -57,7 +57,7 @@ nav {
     // Main page content
     > main {
         // Margin equal to the width of the sidebar
-        margin-left: $spacing-largest * 3;
+        margin-left: $spacing-largest * 3 + $spacing-large;
 
         padding-top:$spacing-normal;
     }
