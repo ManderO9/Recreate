@@ -10,10 +10,53 @@
 
     <link href="Recreate.styles.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
+    <style>
+        @keyframes square-animation {
+            0% {
+                transform: scale(0);
+            }
+
+            60% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+        .square {
+            animation-name: square-animation;
+            animation-duration: 900ms;
+            animation-direction: alternate;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease;
+            width: 20px;
+            height: 20px;
+            background: #e3e3e5;
+            display: inline-block;
+        }
+    </style>
 </head>
 
 <body style="background-color: #313136; color: #e3e3e5;">
-    <div id="app">Loading...
+    <div id="app">
+        <div style="height:100vh; width:100vw; text-align:center;">
+            <div style="display: inline-block; margin-top:43vh;">
+
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr; width:60px;">
+                    <span class="square" style="animation-delay: 300ms; border-top-left-radius:2px;"></span>
+                    <span class="square" style="animation-delay:400ms;" ></span>
+                    <span class="square" style="animation-delay: 500ms; border-top-right-radius: 2px;"></span>
+                    <span class="square" style="animation-delay: 200ms;"></span>
+                    <span class="square" style="animation-delay: 300ms;"></span>
+                    <span class="square" style="animation-delay:400ms;"></span>
+                    <span class="square" style="animation-delay: 100ms; border-bottom-left-radius: 2px;"></span>
+                    <span class="square" style="animation-delay: 200ms;"></span>
+                    <span class="square" style="animation-delay: 300ms; border-bottom-right-radius: 2px;"></span>
+                </div>
+
+            </div>
+        </div>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
 </body>
