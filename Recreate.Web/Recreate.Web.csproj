@@ -30,4 +30,8 @@
     <UpToDateCheckInput Remove="Styles\_base.scss" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Recreate.Core\Recreate.Core.csproj" />
+  </ItemGroup>
+
 </Project>
