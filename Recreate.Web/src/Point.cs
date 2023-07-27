@@ -1,4 +1,4 @@
-﻿namespace Recreate;
+﻿namespace Recreate.Web;
 
 /// <summary>
 /// Represents a point that will be drawn on the screen

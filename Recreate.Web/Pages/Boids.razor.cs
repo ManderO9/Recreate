@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Recreate.Pages;
+namespace Recreate.Web;
 
 public partial class Boids
 {

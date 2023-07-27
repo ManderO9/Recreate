@@ -1,6 +1,6 @@
 using Microsoft.JSInterop;
 
-namespace Recreate.Pages
+namespace Recreate.Web
 {
     public partial class RandomWalkers
     {

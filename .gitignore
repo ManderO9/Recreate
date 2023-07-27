@@ -16,7 +16,7 @@
 # Mono auto generated files
 mono_crash.*
 
-wwwroot/css/
+Recreate.Web/wwwroot/css/
 
 # Build results
 [Dd]ebug/

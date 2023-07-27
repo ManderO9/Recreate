@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Numerics;
 
-namespace Recreate;
+namespace Recreate.Web;
 
 public class Boid
 {

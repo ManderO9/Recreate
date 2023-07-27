@@ -1,4 +1,4 @@
-﻿namespace Recreate;
+﻿namespace Recreate.Web;
 
 public class Routes
 {
