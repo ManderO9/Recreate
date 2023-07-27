@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recreate.Web", "Recreate.We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recreate.Core", "Recreate.Core\Recreate.Core.csproj", "{3AB03911-363B-4BB4-B5A4-7CBEF7744EAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recreate.Desktop", "Recreate.Desktop\Recreate.Desktop.csproj", "{2EAC2EB3-B9E8-4B86-8C5B-59A3748942C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3AB03911-363B-4BB4-B5A4-7CBEF7744EAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AB03911-363B-4BB4-B5A4-7CBEF7744EAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AB03911-363B-4BB4-B5A4-7CBEF7744EAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EAC2EB3-B9E8-4B86-8C5B-59A3748942C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EAC2EB3-B9E8-4B86-8C5B-59A3748942C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EAC2EB3-B9E8-4B86-8C5B-59A3748942C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EAC2EB3-B9E8-4B86-8C5B-59A3748942C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

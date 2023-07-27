@@ -12,12 +12,12 @@ public class Boid
     /// <summary>
     /// The x position of the boid
     /// </summary>
-    public uint XPosition { get; set; }
+    public double XPosition { get; set; }
 
     /// <summary>
     /// The y position of the boid
     /// </summary>
-    public uint YPosition { get; set; }
+    public double YPosition { get; set; }
 
     /// <summary>
     /// The angle the boid is heading toward
