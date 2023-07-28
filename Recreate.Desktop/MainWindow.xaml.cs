@@ -45,7 +45,7 @@ public partial class MainWindow : Window, IDisposable
         mBoidsRuntime.Initialize((boids) =>
         {
             // Run the draw method on UI Thread
-            Application.Current.Dispatcher.Invoke(() =>  Draw(boids));
+            Application.Current.Dispatcher.Invoke(() => Draw(boids));
             
             // Return result
             return Task.CompletedTask;
@@ -81,7 +81,7 @@ public partial class MainWindow : Window, IDisposable
                 shape.UpdatePosition();
 
                 // Add the shape to the canvas
-                canvas.Children.Add(shape.Ellipse);
+                canvas.Children.Add(shape.Polygon);
             }
         }
         // Otherwise...

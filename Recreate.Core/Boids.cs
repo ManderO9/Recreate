@@ -137,6 +137,10 @@ public class Boids : IDisposable
         // Cohesion
         //    Steer towards average position of neighbors(long range attraction)
 
+        //foreach(var boid in mBoids)
+        //{
+        //    boid.HeadingAngle += 0.01;
+        //}
 
         foreach(var boid in mBoids)
         {
@@ -149,8 +153,8 @@ public class Boids : IDisposable
 
         foreach(var boid in mBoids)
         {
-            boid.XPosition = (uint)(boid.XPosition + Math.Cos(-boid.HeadingAngle) * 2);
-            boid.YPosition = (uint)(boid.YPosition + Math.Sin(-boid.HeadingAngle) * 2);
+            boid.XPosition = boid.XPosition + Math.Cos(boid.HeadingAngle) * 0.5;
+            boid.YPosition = boid.YPosition + Math.Sin(boid.HeadingAngle) * 0.5;
         }
 
 
