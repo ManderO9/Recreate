@@ -22,28 +22,48 @@ select:focus {
 // Navbar
 nav {
     background: $color-darker;
-    width: $spacing-largest * 3 + $spacing-large;
+    width: $navbar-width;
     padding: $spacing-large;
     height: 100vh;
-    
     // Fixed position to the left
     position: fixed;
     z-index: 1;
     top: 0;
     left: 0;
-    
+    box-shadow: 0px 0px 8px 0px rgba($color-darker,1);
+    // App logo
+    > .logo {
+        margin-bottom: $spacing-normal;
+        font-size: large;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
     // Page links
     > a {
-        margin-bottom: $spacing-small;
+        margin-left: $spacing-normal;
+        // Link icon
+        > svg {
+            fill: $color-lighter;
+        }
+        // link text
+        > span {
+            margin-left: $spacing-smaller;
+        }
+
+        margin-bottom: $spacing-normal;
         display: block;
         color: $color-lighter;
         text-decoration: none;
-        padding-bottom: $spacing-small;
-        border-bottom: 2px solid $color-dark;
-
+        /*border-bottom: 2px solid $color-dark;*/
         // When the link is clicked
         &.active {
             color: $color-primary;
+
+            > svg {
+                fill: $color-primary;
+            }
         }
     }
 }
@@ -53,13 +73,10 @@ nav {
 .layout-container {
     background-color: $color-dark;
     color: $color-lighter;
-
     // Main page content
     > main {
         // Margin equal to the width of the sidebar
-        margin-left: $spacing-largest * 3 + $spacing-large;
-
-        padding-top:$spacing-normal;
+        margin-left: $navbar-width;
     }
 }
 
@@ -78,6 +95,7 @@ p {
 // Random walkers page
 .random-walkers {
     padding-bottom: $spacing-largest*4;
+    padding-top: $spacing-normal;
 
     > div {
         padding: 0 $spacing-large;
@@ -127,13 +145,31 @@ p {
 }
 
 // Secondary button
-.button-secondary{
+.button-secondary {
     background-color: $color-secondary;
-    color:$color-lighter;
+    color: $color-lighter;
 }
 
 // Accent button
-.button-accent{
+.button-accent {
     background-color: $color-accent;
     color: $color-lighter;
+}
+
+// Home page
+.home-page {
+    > img {
+        height: 100vh;
+        width: calc(100vw - $navbar-width);
+        object-fit: cover;
+    }
+
+    > div {
+        position: absolute;
+        top: $spacing-large;
+        left: calc($navbar-width + $spacing-largest);
+        z-index: 2;
+        font-size:xx-large;
+        text-shadow:1px 1px 4px $color-lighter;
+    }
 }
