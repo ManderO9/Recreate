@@ -39,14 +39,14 @@ public partial class MainWindow : Window, IDisposable
         canvas.Height = Boids.ScreenHeight;
 
         // Set canvas background
-        canvas.Background = new SolidColorBrush(Color.FromArgb(255,44, 44, 44));
+        canvas.Background = new SolidColorBrush(Color.FromArgb(255, 44, 44, 44));
 
         // Initialize the game
         mBoidsRuntime.Initialize((boids) =>
         {
             // Run the draw method on UI Thread
             Application.Current.Dispatcher.Invoke(() => Draw(boids));
-            
+
             // Return result
             return Task.CompletedTask;
         });
@@ -72,13 +72,10 @@ public partial class MainWindow : Window, IDisposable
             foreach(var boid in boids)
             {
                 // Create a new shape
-                var shape = new BoidShape(15, boid.Color, boid);
+                var shape = new BoidShape(boid);
 
                 // Add it to the list of shapes
                 mBoidShapes.Add(shape);
-
-                // Set it's initial position
-                shape.UpdatePosition();
 
                 // Add the shape to the canvas
                 canvas.Children.Add(shape.Polygon);

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Numerics;
 
 namespace Recreate.Core;
 
@@ -53,55 +54,17 @@ public class Boids : IDisposable
         mBoids.AddRange(
         new Boid[]
         {
-            new()
-            {
-                Color = Color.FromArgb(255, 255, 0, 255),
-                XPosition = 50,
-                YPosition = 50,
-                HeadingAngle = 0,
-            },
-            new()
-            {
-                Color = Color.FromArgb(255, 155, 255, 0),
-                XPosition = 250,
-                YPosition = 450,
-                HeadingAngle = 0,
-            },
-            new()
-            {
-                Color = Color.FromArgb(255, 0, 55, 0),
-                XPosition = 150,
-                YPosition = 350,
-                HeadingAngle = 0,
-            },
-            new()
-            {
-                Color = Color.FromArgb(255, 255, 255, 0),
-                XPosition = 150,
-                YPosition = 200,
-                HeadingAngle = 0,
-            },
-            new ()
-            {
-                Color = Color.FromArgb(255, 0, 255, 0),
-                XPosition = 450,
-                HeadingAngle = 0,
-                YPosition = 450,
-            },
-            new ()
-            {
-                Color = Color.FromArgb(255, 255, 0, 0),
-                XPosition = 350,
-                HeadingAngle = 0,
-                YPosition = 350,
-            },
-            new ()
-            {
-                Color = Color.FromArgb(255, 255, 255, 0),
-                XPosition = 150,
-                HeadingAngle = 0,
-                YPosition = 150,
-            },
+            new (new (50), 0,Color.FromArgb(255, 255, 0, 255)),
+            new (new (50, 100), 0,Color.FromArgb(255, 255, 0, 255)),
+            //new (new (50, 150), 0,Color.FromArgb(255, 255, 0, 255)),
+            //new (new (50, 200), 0,Color.FromArgb(255, 255, 0, 255)),
+            //new (new (50, 250), 0,Color.FromArgb(255, 255, 0, 255)),
+            //new (new (120, 120), 0, Color.FromArgb(255, 0, 55, 0)),
+            //new (new (100,100), 0,Color.FromArgb(255, 155, 255, 0)),
+            //new (new (150, 200), Math.PI, Color.FromArgb(255, 255, 255, 0)),
+            //new (new (450, 450), Math.PI, Color.FromArgb(255, 0, 255, 0)),
+            //new (new (350, 350), Math.PI, Color.FromArgb(255, 255, 0, 0)),
+            new (new (150, 150), Math.PI/2, Color.FromArgb(255, 255, 255, 0))
         });
 
         // Initiate the timer
@@ -146,12 +109,10 @@ public class Boids : IDisposable
 
 
 
-
-        //foreach(var boid in mBoids)
-        //{
-        //    boid.HeadingAngle += 0.01;
-        //}
-
+        for(var i = 0; i < mBoids.Count; i++)
+        {
+            mBoids[i].HeadingAngle += 0.0001;
+        }
         //foreach(var boid in mBoids)
         //{
         //    var otherBoids = mBoids.Where(x => x != boid);
