@@ -4,7 +4,6 @@ namespace Recreate.Core;
 
 public class Boids : IDisposable
 {
-
     #region Consts
 
     /// <summary>
@@ -51,53 +50,59 @@ public class Boids : IDisposable
         // Set the draw method
         mDrawImplementation = draw;
 
-        mBoids.Add(new Boid()
+        mBoids.AddRange(
+        new Boid[]
         {
-            Color = Color.FromArgb(255, 255, 0, 255),
-            XPosition = 50,
-            YPosition = 50,
-        });
-        mBoids.Add(new Boid()
-        {
-            Color = Color.FromArgb(255, 255, 255, 0),
-            XPosition = 150,
-            YPosition = 150,
-        });
-        mBoids.Add(new Boid()
-        {
-            Color = Color.FromArgb(255, 255, 0, 0),
-            XPosition = 350,
-            YPosition = 350,
-        });
-        mBoids.Add(new Boid()
-        {
-            Color = Color.FromArgb(255, 0, 255, 0),
-            XPosition = 450,
-            YPosition = 450,
-        });
-
-        mBoids.AddRange(new Boid[]{
+            new()
+            {
+                Color = Color.FromArgb(255, 255, 0, 255),
+                XPosition = 50,
+                YPosition = 50,
+                HeadingAngle = 0,
+            },
             new()
             {
                 Color = Color.FromArgb(255, 155, 255, 0),
                 XPosition = 250,
                 YPosition = 450,
+                HeadingAngle = 0,
             },
             new()
             {
                 Color = Color.FromArgb(255, 0, 55, 0),
                 XPosition = 150,
                 YPosition = 350,
+                HeadingAngle = 0,
             },
             new()
             {
                 Color = Color.FromArgb(255, 255, 255, 0),
                 XPosition = 150,
                 YPosition = 200,
+                HeadingAngle = 0,
+            },
+            new ()
+            {
+                Color = Color.FromArgb(255, 0, 255, 0),
+                XPosition = 450,
+                HeadingAngle = 0,
+                YPosition = 450,
+            },
+            new ()
+            {
+                Color = Color.FromArgb(255, 255, 0, 0),
+                XPosition = 350,
+                HeadingAngle = 0,
+                YPosition = 350,
+            },
+            new ()
+            {
+                Color = Color.FromArgb(255, 255, 255, 0),
+                XPosition = 150,
+                HeadingAngle = 0,
+                YPosition = 150,
             },
         });
-
-
 
         // Initiate the timer
         mTimer = new();
@@ -137,25 +142,30 @@ public class Boids : IDisposable
         // Cohesion
         //    Steer towards average position of neighbors(long range attraction)
 
+
+
+
+
+
         //foreach(var boid in mBoids)
         //{
         //    boid.HeadingAngle += 0.01;
         //}
 
-        foreach(var boid in mBoids)
-        {
-            var otherBoids = mBoids.Where(x => x != boid);
-            var averageX = otherBoids.Average(x => x.XPosition);
-            var averageY = otherBoids.Average(x => x.YPosition);
+        //foreach(var boid in mBoids)
+        //{
+        //    var otherBoids = mBoids.Where(x => x != boid);
+        //    var averageX = otherBoids.Average(x => x.XPosition);
+        //    var averageY = otherBoids.Average(x => x.YPosition);
 
-            boid.HeadingAngle = Math.Atan2(boid.YPosition - averageY, boid.XPosition - averageX);
-        }
+        //    boid.HeadingAngle = Math.Atan2(boid.YPosition - averageY, boid.XPosition - averageX);
+        //}
 
-        foreach(var boid in mBoids)
-        {
-            boid.XPosition = boid.XPosition + Math.Cos(boid.HeadingAngle) * 0.5;
-            boid.YPosition = boid.YPosition + Math.Sin(boid.HeadingAngle) * 0.5;
-        }
+        //foreach(var boid in mBoids)
+        //{
+        //    boid.XPosition = boid.XPosition + Math.Cos(boid.HeadingAngle) * 0.5;
+        //    boid.YPosition = boid.YPosition + Math.Sin(boid.HeadingAngle) * 0.5;
+        //}
 
 
 
