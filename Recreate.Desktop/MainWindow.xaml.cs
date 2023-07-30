@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -50,6 +51,32 @@ public partial class MainWindow : Window, IDisposable
             // Return result
             return Task.CompletedTask;
         });
+
+        canvas.MouseDown += (sender, eventArgs) =>
+        {
+            // Get mouse position
+            var mousePosition = Mouse.GetPosition(canvas);
+
+            // Create a new boid at that position
+            var boid = mBoidsRuntime.AddBoid(
+                 (float)mousePosition.X,
+                 (float)mousePosition.Y,
+                 Random.Shared.NextSingle() * 2 * Math.PI,
+                 System.Drawing.Color.FromArgb(255,
+                     Random.Shared.Next(256),
+                     Random.Shared.Next(256),
+                     Random.Shared.Next(256)));
+
+            // Create the shape representing this boid
+            var shape = new BoidShape(boid);
+
+            // Add the shape to the list of drawable shapes
+            mBoidShapes!.Add(shape);
+
+            // Add the shape to the canvas
+            canvas.Children.Add(shape.Polygon);
+        };
+
     }
 
     #endregion

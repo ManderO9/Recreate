@@ -1,5 +1,6 @@
 using Microsoft.JSInterop;
 using Recreate.Core;
+using System.Runtime.Intrinsics.X86;
 
 namespace Recreate.Web;
 
@@ -38,7 +39,22 @@ public partial class Boids
     private async Task Draw(List<Boid> boids)
     {
         // Call the javascript method passing in the pixels array
-        await mJSModule.InvokeVoidAsync("drawImage", boids);
+        await mJSModule.InvokeVoidAsync("drawImage",
+            boids.Select(x =>
+            new
+            {
+                x.Color,
+                HeadPointX = x.HeadPoint.X,
+                HeadPointY = x.HeadPoint.Y,
+                LeftWingPointX = x.LeftWingPoint.X,
+                LeftWingPointY = x.LeftWingPoint.Y,
+                RightWingPointX = x.RightWingPoint.X,
+                RightWingPointY = x.RightWingPoint.Y,
+                StomachPointX = x.StomachPoint.X,
+                StomachPointY = x.StomachPoint.Y,
+                PositionX = x.Position.X,
+                PositionY = x.Position.Y,
+            }));
     }
 
     #endregion

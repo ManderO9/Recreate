@@ -1,6 +1,4 @@
 ﻿using Recreate.Core;
-using System.Collections.Generic;
-using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -35,10 +33,8 @@ public partial class BoidShape
         Polygon = new Polygon();
 
         // Set its color
-        Polygon.Fill = new SolidColorBrush(Color.FromArgb(referenceBoid.Color.A,
-                            referenceBoid.Color.R,
-                            referenceBoid.Color.G,
-                            referenceBoid.Color.B));
+        Polygon.Fill = new SolidColorBrush(
+        Color.FromArgb(referenceBoid.Color.A, referenceBoid.Color.R, referenceBoid.Color.G, referenceBoid.Color.B));
     }
 
     /// <summary>
