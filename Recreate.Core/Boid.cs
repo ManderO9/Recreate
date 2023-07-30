@@ -17,6 +17,32 @@ public class Boid
     /// </summary>
     private const float size = 15;
 
+    /// <summary>
+    /// The head of the boid
+    /// </summary>
+    private Vector2 mHead = new Vector2(0, size / 2);
+
+    /// <summary>
+    /// The left wing of the boid
+    /// </summary>
+    private Vector2 mLeftWing = new Vector2(-size / 3, -size / 2);
+
+    /// <summary>
+    /// The right wing of the boid
+    /// </summary>
+    private Vector2 mRightWing = new Vector2(size / 3, -size / 2);
+
+    /// <summary>
+    /// The point that will create the emptiness in the back of the boid
+    /// </summary>
+    private Vector2 mStomach = new Vector2(0, (-size / 2) / 3);
+
+    /// <summary>
+    /// Returns the center of the boid
+    /// </summary>
+    /// <returns></returns>
+    private Vector2 mCenter => (mHead + mLeftWing + mRightWing) / 3;
+
     #endregion
 
     #region Public Properties
@@ -48,22 +74,22 @@ public class Boid
     /// <summary>
     /// The head of the boid
     /// </summary>
-    public Vector2 HeadPoint { get; private set; } = new Vector2(0, size / 2);
+    public Vector2 HeadPoint { get; private set; } 
 
     /// <summary>
     /// The left wing of the boid
     /// </summary>
-    public Vector2 LeftWingPoint { get; private set; } = new Vector2(-size / 3, -size / 2);
+    public Vector2 LeftWingPoint { get; private set; }
 
     /// <summary>
     /// The right wing of the boid
     /// </summary>
-    public Vector2 RightWingPoint { get; private set; } = new Vector2(size / 3, -size / 2);
+    public Vector2 RightWingPoint { get; private set; } 
 
     /// <summary>
     /// The point that will create the emptiness in the back of the boid
     /// </summary>
-    public Vector2 StomachPoint { get; private set; } = new Vector2(0, (-size / 2) / 3);
+    public Vector2 StomachPoint { get; private set; }
 
     #endregion
 
@@ -84,17 +110,20 @@ public class Boid
 
         // Set angle of boid
         HeadingAngle = initialAngle;
+
+        // Initiate properties
+        HeadPoint = mHead;
+        LeftWingPoint = mLeftWing;
+        RightWingPoint = mRightWing;
+        StomachPoint = mStomach;
+
+        // Rotate the boid according to the passed in angle
+        Rotate(initialAngle);
     }
 
     #endregion
 
     #region Private Helpers
-
-    /// <summary>
-    /// Returns the center of the boid
-    /// </summary>
-    /// <returns></returns>
-    private Vector2 Center() => (HeadPoint + LeftWingPoint + RightWingPoint) / 3;
 
     /// <summary>
     /// Rotates the boid according to an angle
@@ -105,14 +134,11 @@ public class Boid
         // Make the boid point to the right when the angle is equal to 0
         angle = angle - Math.PI / 2;
 
-        // Get the center of the boid
-        var center = Center();
-
         // Rotate each point in the boid according to its center
-        HeadPoint = RotatePoint(HeadPoint, center, angle);
-        LeftWingPoint = RotatePoint(LeftWingPoint, center, angle);
-        RightWingPoint = RotatePoint(RightWingPoint, center, angle);
-        StomachPoint = RotatePoint(StomachPoint, center, angle);
+        HeadPoint = RotatePoint(mHead, mCenter, angle);
+        LeftWingPoint = RotatePoint(mLeftWing, mCenter, angle);
+        RightWingPoint = RotatePoint(mRightWing, mCenter, angle);
+        StomachPoint = RotatePoint(mStomach, mCenter, angle);
     }
 
     /// <summary>
@@ -131,5 +157,4 @@ public class Boid
     }
 
     #endregion
-
 }

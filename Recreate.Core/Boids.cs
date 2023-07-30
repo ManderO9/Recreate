@@ -56,14 +56,14 @@ public class Boids : IDisposable
         {
             new (new (50), 0,Color.FromArgb(255, 255, 0, 255)),
             new (new (50, 100), 0,Color.FromArgb(255, 255, 0, 255)),
-            //new (new (50, 150), 0,Color.FromArgb(255, 255, 0, 255)),
-            //new (new (50, 200), 0,Color.FromArgb(255, 255, 0, 255)),
-            //new (new (50, 250), 0,Color.FromArgb(255, 255, 0, 255)),
-            //new (new (120, 120), 0, Color.FromArgb(255, 0, 55, 0)),
-            //new (new (100,100), 0,Color.FromArgb(255, 155, 255, 0)),
-            //new (new (150, 200), Math.PI, Color.FromArgb(255, 255, 255, 0)),
-            //new (new (450, 450), Math.PI, Color.FromArgb(255, 0, 255, 0)),
-            //new (new (350, 350), Math.PI, Color.FromArgb(255, 255, 0, 0)),
+            new (new (50, 150), 0,Color.FromArgb(255, 255, 0, 255)),
+            new (new (50, 200), 0,Color.FromArgb(255, 255, 0, 255)),
+            new (new (50, 250), 0,Color.FromArgb(255, 255, 0, 255)),
+            new (new (120, 120), 0, Color.FromArgb(255, 0, 55, 0)),
+            new (new (100,100), 0,Color.FromArgb(255, 155, 255, 0)),
+            new (new (150, 200), Math.PI, Color.FromArgb(255, 255, 255, 0)),
+            new (new (450, 450), Math.PI, Color.FromArgb(255, 0, 255, 0)),
+            new (new (350, 350), Math.PI, Color.FromArgb(255, 255, 0, 0)),
             new (new (150, 150), Math.PI/2, Color.FromArgb(255, 255, 255, 0))
         });
 
@@ -111,7 +111,7 @@ public class Boids : IDisposable
 
         for(var i = 0; i < mBoids.Count; i++)
         {
-            mBoids[i].HeadingAngle += 0.0001;
+            mBoids[i].HeadingAngle += 0.01;
         }
         //foreach(var boid in mBoids)
         //{
