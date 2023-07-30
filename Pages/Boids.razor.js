@@ -15,16 +15,18 @@ export function drawImage(data) {
     for (var i = 0; i < data.length; i++) {
         var boid = data[i];
 
+
         // Set fill color
-        context.fillStyle = "rgba(" + boid.color.r + "," + boid.color.g + "," + boid.color.b + "," + boid.color.a + ")";// "#" + boid.color.name;
+        context.fillStyle = "rgba(" + boid.color.r + "," + boid.color.g + "," + boid.color.b + "," + boid.color.a + ")";
 
         // Draw it
         context.beginPath();
-        context.arc(boid.xPosition, boid.yPosition, 10, 0, 2 * Math.PI);
-        context.fill(); 
+        context.moveTo(boid.headPointX + boid.positionX, boid.headPointY + boid.positionY);
+        context.lineTo(boid.leftWingPointX + boid.positionX, boid.leftWingPointY + boid.positionY);
+        context.lineTo(boid.stomachPointX + boid.positionX, boid.stomachPointY + boid.positionY);
+        context.lineTo(boid.rightWingPointX + boid.positionX, boid.rightWingPointY + boid.positionY);
+        context.closePath();
+        context.fill();
     }
-
-
-
 }
 
