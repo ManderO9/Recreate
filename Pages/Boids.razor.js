@@ -8,13 +8,12 @@ export function drawImage(data) {
     var context = canvas.getContext("2d");
 
     // Fill the entire screen with black
-    context.fillStyle = "#1e1e20";
+    context.fillStyle = "#1e1e20aa";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // For each boid
     for (var i = 0; i < data.length; i++) {
         var boid = data[i];
-
 
         // Set fill color
         context.fillStyle = "rgba(" + boid.color.r + "," + boid.color.g + "," + boid.color.b + "," + boid.color.a + ")";
