@@ -99,6 +99,7 @@ public class Boids : IDisposable
 
         return boid;
     }
+    
     #endregion
 
     #region Private Methods

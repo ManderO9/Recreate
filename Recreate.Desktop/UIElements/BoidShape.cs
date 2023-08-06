@@ -17,6 +17,9 @@ public class BoidShape
     /// </summary>
     public Boid ReferenceBoid { get; }
 
+    /// <summary>
+    /// The polygon that will get drawn on screen representing the boid
+    /// </summary>
     public Polygon Polygon { get; }
 
 
