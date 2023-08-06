@@ -9,7 +9,7 @@ namespace Recreate.Desktop;
 /// <summary>
 /// Represents a shape that will get drawn on the canvas for a boid
 /// </summary>
-public partial class BoidShape
+public class BoidShape
 {
 
     /// <summary>
