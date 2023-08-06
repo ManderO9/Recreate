@@ -1,7 +1,9 @@
 ﻿using Recreate.Core;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,11 +12,90 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace Recreate.Desktop;
+
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window, IDisposable
+public partial class MainWindow : Window, IDisposable, INotifyPropertyChanged
 {
+    #region Properties Backing Fields
+
+    private string mLongDistanceAttractionEnabledButtonText;
+    private string mShortDistanceSeparationEnabledButtonText;
+    private string mEdgeAvoidanceEnabledButtonText;
+    private string mMovementRandomnessEnabledButtonText;
+    private string mAlignmentEnabledButtonText;
+    
+    #endregion
+
+    #region Public Properties
+
+    public string LongDistanceAttractionEnabledButtonText
+    {
+        get => mLongDistanceAttractionEnabledButtonText;
+        set
+        {
+            mLongDistanceAttractionEnabledButtonText = value;
+            OnPropertyChanged();
+        }
+    }
+    public string ShortDistanceSeparationEnabledButtonText
+    {
+        get => mShortDistanceSeparationEnabledButtonText;
+        set
+        {
+            mShortDistanceSeparationEnabledButtonText = value;
+            OnPropertyChanged();
+        }
+    }
+    public string EdgeAvoidanceEnabledButtonText
+    {
+        get => mEdgeAvoidanceEnabledButtonText;
+        set
+        {
+            mEdgeAvoidanceEnabledButtonText = value;
+            OnPropertyChanged();
+        }
+    }
+    public string MovementRandomnessEnabledButtonText
+    {
+        get => mMovementRandomnessEnabledButtonText;
+        set
+        {
+            mMovementRandomnessEnabledButtonText = value;
+            OnPropertyChanged();
+        }
+    }
+    public string AlignmentEnabledButtonText
+    {
+        get => mAlignmentEnabledButtonText;
+        set
+        {
+            mAlignmentEnabledButtonText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
+  
+    #region Property Changed Event
+
+    /// <summary>
+    /// The event that is fired when any property changes its value
+    /// </summary>
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>
+    /// Call this to fire a <see cref="PropertyChanged"/> event
+    /// </summary>
+    /// <param name="name"></param>
+    public void OnPropertyChanged([CallerMemberName] string? name = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+
+    #endregion
+
     #region Private Members
 
     /// <summary>
@@ -38,8 +119,20 @@ public partial class MainWindow : Window, IDisposable
 
     public MainWindow()
     {
+        // Set initial value of private properties
+        mAlignmentEnabledButtonText = "Alignment Enabled: " + mBoidsRuntime.AlignmentEnabled;
+        mMovementRandomnessEnabledButtonText = "Random movement Enabled: " + mBoidsRuntime.MovementRandomnessEnabled;
+        EdgeAvoidanceEnabledButtonText = "Edge avoidance Enabled: " + mBoidsRuntime.EdgeAvoidanceEnabled;
+        mShortDistanceSeparationEnabledButtonText = "Short distance separation Enabled: " + mBoidsRuntime.ShortDistanceSeparationEnabled;
+        mLongDistanceAttractionEnabledButtonText = "Long distance attraction Enabled: " + mBoidsRuntime.LongDistanceAttractionEnabled;
+
+        // Set data context 
+        DataContext = this;
+
         InitializeComponent();
 
+
+        
         // Set width and height of the canvas
         canvas.Width = Boids.ScreenWidth;
         canvas.Height = Boids.ScreenHeight;
@@ -183,5 +276,35 @@ public partial class MainWindow : Window, IDisposable
         mBoidsRuntime.Dispose();
     }
 
+    #endregion
+
+    #region Button Click Event Handlers
+
+    private void AlignmentEnabledButtonClick(object sender, RoutedEventArgs e)
+    {
+        mBoidsRuntime.AlignmentEnabled = !mBoidsRuntime.AlignmentEnabled;
+        AlignmentEnabledButtonText = "Alignment Enabled: " + mBoidsRuntime.AlignmentEnabled;
+    }
+    private void MovementRandomnessEnabledButtonClick(object sender, RoutedEventArgs e)
+    {
+        mBoidsRuntime.MovementRandomnessEnabled = !mBoidsRuntime.MovementRandomnessEnabled;
+        MovementRandomnessEnabledButtonText = "Random movement Enabled: " + mBoidsRuntime.MovementRandomnessEnabled;
+    }
+    private void EdgeAvoidanceEnabledButtonClick(object sender, RoutedEventArgs e)
+    {
+        mBoidsRuntime.EdgeAvoidanceEnabled = !mBoidsRuntime.EdgeAvoidanceEnabled;
+        EdgeAvoidanceEnabledButtonText = "Edge avoidance Enabled: " + mBoidsRuntime.EdgeAvoidanceEnabled;
+    }
+    private void ShortDistanceSeparationEnabledButtonClick(object sender, RoutedEventArgs e)
+    {
+        mBoidsRuntime.ShortDistanceSeparationEnabled = !mBoidsRuntime.ShortDistanceSeparationEnabled;
+        ShortDistanceSeparationEnabledButtonText = "Short distance separation Enabled: " + mBoidsRuntime.ShortDistanceSeparationEnabled;
+    }
+    private void LongDistanceAttractionEnabledButtonClick(object sender, RoutedEventArgs e)
+    {
+        mBoidsRuntime.LongDistanceAttractionEnabled = !mBoidsRuntime.LongDistanceAttractionEnabled;
+        LongDistanceAttractionEnabledButtonText = "Long distance attraction Enabled: " + mBoidsRuntime.LongDistanceAttractionEnabled;
+    }
+    
     #endregion
 }

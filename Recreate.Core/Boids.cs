@@ -88,6 +88,14 @@ public class Boids : IDisposable
         mTimer.Start();
     }
 
+    /// <summary>
+    /// Adds a boid to the list of boids
+    /// </summary>
+    /// <param name="x">The x position of the boid</param>
+    /// <param name="y">The y position of the boid</param>
+    /// <param name="direction">The angle at which the boid is heading</param>
+    /// <param name="color">The color of the boid</param>
+    /// <returns></returns>
     public Boid AddBoid(float x, float y, double direction, Color color)
     {
         var boid = new Boid(new Vector2(x, y), direction, color);
@@ -99,7 +107,17 @@ public class Boids : IDisposable
 
         return boid;
     }
-    
+
+    #endregion
+
+    #region Public Properties
+
+    public bool AlignmentEnabled { get; set; } = true;
+    public bool LongDistanceAttractionEnabled { get; set; } = true;
+    public bool ShortDistanceSeparationEnabled { get; set; } = true;
+    public bool EdgeAvoidanceEnabled { get; set; } = true;
+    public bool MovementRandomnessEnabled { get; set; } = true;
+
     #endregion
 
     #region Private Methods
@@ -163,78 +181,43 @@ public class Boids : IDisposable
             // For each boid
             foreach(var boid in mBoids)
             {
-                // The distance from the screen edge before we turn
-                var offset = 30;
+                var longDistance = 40;
+                var longDistanceAttractionPercent = 0.2;
+                var alignmentPercent = 0.2;
 
-                // The angle at which we will turn each frame
-                var additionValue = 0.3;
+                if(!AlignmentEnabled)
+                    alignmentPercent = 0;
+                if(!LongDistanceAttractionEnabled)
+                    longDistanceAttractionPercent = 0;
 
-                // Get the direction we are heading to modulus 2 PI
-                var heading = boid.HeadingAngle % (2 * Math.PI);
+                //if(!ShortDistanceSeparationEnabled)
 
-                // Whether we are heading to the right
-                var headingRight = (heading >= -Math.PI / 2d && heading <= Math.PI / 2d) || heading <= -3d / 2d * Math.PI || heading >= 3d / 2d * Math.PI;
 
-                // Whether we are heading to the left
-                var headingLeft = (heading > Math.PI / 2d && heading < Math.PI * 3d / 2d) || (heading > -3d / 2d * Math.PI && heading < -Math.PI / 2d);
-
-                // Whether we are heading to the bottom
-                var headingDown = (heading >= 0 && heading <= Math.PI) || (heading >= -2d * Math.PI && heading <= -Math.PI);
-
-                // Whether we are heading to the top
-                var headingUp = (heading < 0 && heading > -Math.PI) || (heading > Math.PI && heading < 2d * Math.PI);
-
-                // If we are close to the right edge and heading right
-                if(boid.Position.X + offset >= ScreenWidth && headingRight)
-                {    // If we are heading to the bottom
-                    if(headingDown)
-                        // Turn to the bottom
-                        boid.HeadingAngle += additionValue;
-
-                    // Otherwise...
-                    else
-                        // Turn towards the top
-                        boid.HeadingAngle -= additionValue;
-                }
-                // Otherwise if we are close to the left edge and heading left
-                else if(boid.Position.X - offset <= 0 && headingLeft)
-                {   // If we are heading to the top
-                    if(!headingDown)
-                        // Turn toward the top
-                        boid.HeadingAngle += additionValue;
-
-                    // Otherwise...
-                    else
-                        // Turn toward the bottom
-                        boid.HeadingAngle -= additionValue;
-
-                }
-                // Otherwise if we are close to the bottom edge and heading down
-                else if(boid.Position.Y + offset >= ScreenHeight && headingDown)
+                if(LongDistanceAttractionEnabled || AlignmentEnabled || ShortDistanceSeparationEnabled)
                 {
-                    // If we are heading right
-                    if(headingRight)
-                        // Turn toward the right
-                        boid.HeadingAngle -= additionValue;
+                    var neighbors = mBoids.Where(x => x != boid && Vector2.Distance(boid.Position, x.Position) < longDistance);
 
-                    // Otherwise...
-                    else
-                        // Turn toward the left
-                        boid.HeadingAngle += additionValue;
+                    if(neighbors.Count() > 0)
+                    {
+                        var positionX = neighbors.Average(x => x.Position.X);
+                        var positionY = neighbors.Average(x => x.Position.Y);
+
+                        double alpha = Math.Atan((boid.Position.Y - positionY) / (boid.Position.X - positionX));
+
+                        boid.HeadingAngle = (1 - alignmentPercent - longDistanceAttractionPercent) * boid.HeadingAngle
+                            + alignmentPercent * neighbors.Average(x => x.HeadingAngle % (2 * Math.PI))
+                            + alpha * longDistanceAttractionPercent;
+                    }
                 }
-                // Otherwise if we are close to the top edge and heading up
-                else if(boid.Position.Y - offset < 0 && headingUp)
-                {
-                    // If we are heading left
-                    if(!headingRight)
-                        // Turn toward the left
-                        boid.HeadingAngle -= additionValue;
-                    
-                    // Otherwise...
-                    else
-                        // Turn to the right
-                        boid.HeadingAngle += additionValue;
-                }
+
+                if(MovementRandomnessEnabled)
+                    // Add randomness to movement
+                    boid.HeadingAngle += (Random.Shared.NextSingle() - 0.5) * 0.1;
+
+                if(EdgeAvoidanceEnabled)
+                    // Avoid hitting the edges of the screen
+                    AddEdgeAvoidance(boid);
+
 
 
                 // Get new position after applying velocity
@@ -245,14 +228,100 @@ public class Boids : IDisposable
 
                 // TODO: remove the debug breaks after you finish
                 // Limit the boid within screen bounds
-                if(newPosition.Y > ScreenHeight + 20) Debugger.Break();// newPosition.Y = 0;
-                if(newPosition.Y < -20) Debugger.Break();//newPosition.Y = ScreenHeight;
-                if(newPosition.X < -20) Debugger.Break();//newPosition.X = ScreenWidth;
-                if(newPosition.X > ScreenWidth + 20) Debugger.Break();//newPosition.X = 0;
+                if(newPosition.Y > ScreenHeight) newPosition.Y = 0;
+                if(newPosition.Y < 0) newPosition.Y = ScreenHeight;
+                if(newPosition.X < 0) newPosition.X = ScreenWidth;
+                if(newPosition.X > ScreenWidth) newPosition.X = 0;
+
+                //if(newPosition.Y > ScreenHeight + 20) Debugger.Break();
+                //if(newPosition.Y < -20) Debugger.Break();
+                //if(newPosition.X < -20) Debugger.Break();
+                //if(newPosition.X > ScreenWidth + 20) Debugger.Break();
+
 
                 // Set new position of boid
                 boid.Position = newPosition;
             }
+        }
+    }
+
+    /// <summary>
+    /// Makes the boid avoid the edges of the screen and turn to a different direction to avoid hitting the edge
+    /// </summary>
+    /// <param name="boid">The boid to update heading angle to avoid the obstacle</param>
+    private void AddEdgeAvoidance(Boid boid)
+    {
+        // The distance from the screen edge before we turn
+        var offset = 30;
+
+        // The angle at which we will turn each frame
+        var additionValue = 0.3;
+
+        // Get the direction we are heading to modulus 2 PI
+        var heading = boid.HeadingAngle % (2 * Math.PI);
+
+        // Whether we are heading to the right
+        var headingRight = (heading >= -Math.PI / 2d && heading <= Math.PI / 2d) || heading <= -3d / 2d * Math.PI || heading >= 3d / 2d * Math.PI;
+
+        // Whether we are heading to the left
+        var headingLeft = (heading > Math.PI / 2d && heading < Math.PI * 3d / 2d) || (heading > -3d / 2d * Math.PI && heading < -Math.PI / 2d);
+
+        // Whether we are heading to the bottom
+        var headingDown = (heading >= 0 && heading <= Math.PI) || (heading >= -2d * Math.PI && heading <= -Math.PI);
+
+        // Whether we are heading to the top
+        var headingUp = (heading < 0 && heading > -Math.PI) || (heading > Math.PI && heading < 2d * Math.PI);
+
+        // If we are close to the right edge and heading right
+        if(boid.Position.X + offset >= ScreenWidth && headingRight)
+        {    // If we are heading to the bottom
+            if(headingDown)
+                // Turn to the bottom
+                boid.HeadingAngle += additionValue;
+
+            // Otherwise...
+            else
+                // Turn towards the top
+                boid.HeadingAngle -= additionValue;
+        }
+        // Otherwise if we are close to the left edge and heading left
+        else if(boid.Position.X - offset <= 0 && headingLeft)
+        {   // If we are heading to the top
+            if(!headingDown)
+                // Turn toward the top
+                boid.HeadingAngle += additionValue;
+
+            // Otherwise...
+            else
+                // Turn toward the bottom
+                boid.HeadingAngle -= additionValue;
+
+        }
+        // Otherwise if we are close to the bottom edge and heading down
+        else if(boid.Position.Y + offset >= ScreenHeight && headingDown)
+        {
+            // If we are heading right
+            if(headingRight)
+                // Turn toward the right
+                boid.HeadingAngle -= additionValue;
+
+            // Otherwise...
+            else
+                // Turn toward the left
+                boid.HeadingAngle += additionValue;
+        }
+        // Otherwise if we are close to the top edge and heading up
+        else if(boid.Position.Y - offset < 0 && headingUp)
+        {
+            // If we are heading left
+            if(!headingRight)
+                // Turn toward the left
+                boid.HeadingAngle -= additionValue;
+
+            // Otherwise...
+            else
+                // Turn to the right
+                boid.HeadingAngle += additionValue;
         }
     }
 

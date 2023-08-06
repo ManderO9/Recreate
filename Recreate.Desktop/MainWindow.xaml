@@ -6,9 +6,41 @@
         xmlns:local="clr-namespace:Recreate.Desktop"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="900">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="FontWeight" Value="DemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="5"
+                                Background="Cornsilk"
+                                BorderThickness="0">
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="10">
+                                
+                            </ContentPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <Canvas x:Name="canvas">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="{Binding AlignmentEnabledButtonText}" Click="AlignmentEnabledButtonClick"></Button>
+                <Button Content="{Binding MovementRandomnessEnabledButtonText}" Click="MovementRandomnessEnabledButtonClick"></Button>
+                <Button Content="{Binding EdgeAvoidanceEnabledButtonText}" Click="EdgeAvoidanceEnabledButtonClick"></Button>
+                <Button Content="{Binding ShortDistanceSeparationEnabledButtonText}" Click="ShortDistanceSeparationEnabledButtonClick"></Button>
+                <Button Content="{Binding LongDistanceAttractionEnabledButtonText}" Click="LongDistanceAttractionEnabledButtonClick"></Button>    
+            </StackPanel>
+            <Canvas x:Name="canvas">
             
-        </Canvas>
+            </Canvas>
+        </StackPanel>
     </Grid>
 </Window>
