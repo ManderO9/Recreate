@@ -5,6 +5,12 @@ namespace Recreate.Core;
 
 public class Boid
 {
+
+    public double vx;
+    public double vy;
+    public double x;
+    public double y;
+
     #region Private Members
 
     /// <summary>
@@ -52,10 +58,10 @@ public class Boid
     /// </summary>
     public Color Color { get; set; }
 
-    /// <summary>
-    /// The position of this boid
-    /// </summary>
-    public Vector2 Position { get; set; }
+    ///// <summary>
+    ///// The position of this boid
+    ///// </summary>
+    //public Vector2 Position { get; set; }
 
     /// <summary>
     /// The angle the boid is heading toward
@@ -106,7 +112,10 @@ public class Boid
         Color = color;
 
         // Set the position of the boid
-        Position = position;
+        //Position = position;
+        x = position.X;
+        y = position.Y;
+
 
         // Set angle of boid
         HeadingAngle = initialAngle;

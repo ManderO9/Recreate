@@ -53,9 +53,10 @@ public class BoidShape
         Polygon.Points.Add(new Point(ReferenceBoid.StomachPoint.X, ReferenceBoid.StomachPoint.Y));
         Polygon.Points.Add(new Point(ReferenceBoid.RightWingPoint.X, ReferenceBoid.RightWingPoint.Y));
 
-        // Set the circle position
-        Canvas.SetLeft(Polygon, ReferenceBoid.Position.X);
-        Canvas.SetTop(Polygon, ReferenceBoid.Position.Y);
+        //// Set the polygon position
+        Canvas.SetLeft(Polygon, ReferenceBoid.x);
+        Canvas.SetTop(Polygon, ReferenceBoid.y);
+
     }
 
 }

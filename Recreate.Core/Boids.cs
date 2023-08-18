@@ -57,11 +57,14 @@ public class Boids : IDisposable
         // Set the draw method
         mDrawImplementation = draw;
 
-        for(int i = 0; i < 30; i++)
+        for(int i = 0; i < 100; i++)
         {
             mBoids.Add(new(new(
-                Random.Shared.Next(ScreenWidth),
-                Random.Shared.Next(ScreenHeight)),
+                    Random.Shared.Next(ScreenWidth),
+                    Random.Shared.Next(ScreenHeight)),
+
+                //ScreenWidth / 2,
+                //ScreenHeight / 2),
                 Random.Shared.NextSingle() * 2 * Math.PI,
                 Color.FromArgb(255, 197, 66, 245)));
         }
@@ -127,202 +130,144 @@ public class Boids : IDisposable
     /// </summary>
     private void Update()
     {
-        // Rules for flocking
+        double minspeed = 3;
+        double maxspeed = 6;
+        double visual_range = 40;
+        double protected_range_squared = 8*8;
+        double visual_range_squared = 40*40;
+        double centering_factor = 0.0005;
+        double matching_factor = 0.05;
+        double avoidfactor = 0.05;
+        double turnfactor = 0.2;
 
-        // Separation
-        //    Avoid crowding neighbors(short range repulsion)
-        // Alignment
-        //    Steer towards average heading of neighbors
-        // Cohesion
-        //    Steer towards average position of neighbors(long range attraction)
-
-
+        var margin = 200;
 
         lock(mBoids)
-        {
-            //var longDistance = 60;
-            //var shortDistance = 20;
 
-            //var longDistanceAttractionRate = 0.2;
-
-            //foreach(var boid in mBoids)
-            //{
-            //    var neighbors = mBoids.Where(x => x != boid && Vector2.Distance(boid.Position, x.Position) < longDistance);
-
-            //    if(neighbors.Count() > 0)
-            //    {
-            //        boid.HeadingAngle = neighbors.Average(x => x.HeadingAngle % (2 * Math.PI));
-
-            //        var longRangeNeighbors = neighbors.Where(x => Vector2.Distance(boid.Position, x.Position) > shortDistance);
-
-            //        if(longRangeNeighbors.Count() > 0)
-            //        {
-            //            var positionX = neighbors.Average(x => x.Position.X);
-            //            var positionY = neighbors.Average(x => x.Position.Y);
-
-            //            double alpha = Math.Atan((boid.Position.Y - positionY) / (boid.Position.X - positionX));
-            //            boid.HeadingAngle = alpha * longDistanceAttractionRate + (1 - longDistanceAttractionRate) * boid.HeadingAngle;
-            //        }
-
-
-            //        var shortRangeNeighbors = neighbors.Where(x => Vector2.Distance(boid.Position, x.Position) < shortDistance);
-
-            //        if(shortRangeNeighbors.Count() > 0)
-            //        {
-            //            boid.HeadingAngle = shortRangeNeighbors.Average(x => x.HeadingAngle % (2 * Math.PI)) + (Random.Shared.NextSingle() - 0.5) * 0.1;
-            //        }
-            //    }
-
-            //    // Add randomness to movement
-            //    boid.HeadingAngle += (Random.Shared.NextSingle() - 0.5) * 0.03;
-
-            //}
-
-            // For each boid
             foreach(var boid in mBoids)
             {
-                var longDistance = 40;
-                var longDistanceAttractionPercent = 0.2;
-                var alignmentPercent = 0.2;
 
-                if(!AlignmentEnabled)
-                    alignmentPercent = 0;
-                if(!LongDistanceAttractionEnabled)
-                    longDistanceAttractionPercent = 0;
+                // Zero all accumulator variables (can't do this in one line in C)
+                double xpos_avg = 0,
+                    ypos_avg = 0,
+                    xvel_avg = 0,
+                    yvel_avg = 0,
+                    neighboring_boids = 0,
+                    close_dx = 0,
+                    close_dy = 0;
 
-                //if(!ShortDistanceSeparationEnabled)
-
-
-                if(LongDistanceAttractionEnabled || AlignmentEnabled || ShortDistanceSeparationEnabled)
+                // For every other boid in the flock . . .
+                foreach(var otherboid in mBoids)
                 {
-                    var neighbors = mBoids.Where(x => x != boid && Vector2.Distance(boid.Position, x.Position) < longDistance);
+                    if(otherboid == boid)
+                        continue;
 
-                    if(neighbors.Count() > 0)
+
+                    // Compute differences in x and y coordinates
+                    var dx = boid.x - otherboid.x;
+                    var dy = boid.y - otherboid.y;
+
+                    // Are both those differences less than the visual range?
+                    if(Math.Abs(dx) < visual_range && Math.Abs(dy) < visual_range)
                     {
-                        var positionX = neighbors.Average(x => x.Position.X);
-                        var positionY = neighbors.Average(x => x.Position.Y);
 
-                        double alpha = Math.Atan((boid.Position.Y - positionY) / (boid.Position.X - positionX));
+                        // If so, calculate the squared distance
+                        var squared_distance = dx * dx + dy * dy;
 
-                        boid.HeadingAngle = (1 - alignmentPercent - longDistanceAttractionPercent) * boid.HeadingAngle
-                            + alignmentPercent * neighbors.Average(x => x.HeadingAngle % (2 * Math.PI))
-                            + alpha * longDistanceAttractionPercent;
+                        // Is squared distance less than the protected range?
+                        if(squared_distance < protected_range_squared)
+                        {
+
+                            // If so, calculate difference in x/y-coordinates to nearfield boid
+                            close_dx += boid.x - otherboid.x;
+                            close_dy += boid.y - otherboid.y;
+                        }
+                        // If not in protected range, is the boid in the visual range?
+                        else if(squared_distance < visual_range_squared)
+                        {
+
+                            // Add other boid's x/y-coord and x/y vel to accumulator variables
+                            xpos_avg += otherboid.x;
+                            ypos_avg += otherboid.y;
+                            xvel_avg += otherboid.vx;
+                            yvel_avg += otherboid.vy;
+
+                            // Increment number of boids within visual range
+                            neighboring_boids += 1;
+                        }
+
                     }
                 }
 
-                if(MovementRandomnessEnabled)
-                    // Add randomness to movement
-                    boid.HeadingAngle += (Random.Shared.NextSingle() - 0.5) * 0.1;
-
-                if(EdgeAvoidanceEnabled)
-                    // Avoid hitting the edges of the screen
-                    AddEdgeAvoidance(boid);
 
 
 
-                // Get new position after applying velocity
-                var newPosition = new Vector2(
-                    (float)(boid.Position.X + mBoidVelocity.X * Math.Cos(boid.HeadingAngle)),
-                    (float)(boid.Position.Y + mBoidVelocity.Y * Math.Sin(boid.HeadingAngle)));
+                // If there were any boids in the visual range . . .            
+                if(neighboring_boids > 0)
+                {
+
+                    // Divide accumulator variables by number of boids in visual range
+                    xpos_avg = xpos_avg / neighboring_boids;
+                    ypos_avg = ypos_avg / neighboring_boids;
+                    xvel_avg = xvel_avg / neighboring_boids;
+                    yvel_avg = yvel_avg / neighboring_boids;
+
+                    // Add the centering/matching contributions to velocity
+                    boid.vx = (boid.vx +
+                               (xpos_avg - boid.x) * centering_factor +
+                               (xvel_avg - boid.vx) * matching_factor);
+
+                    boid.vy = (boid.vy +
+                               (ypos_avg - boid.y) * centering_factor +
+                               (yvel_avg - boid.vy) * matching_factor);
+                }
+
+                // Add the avoidance contribution to velocity
+                boid.vx = boid.vx + (close_dx * avoidfactor);
+                boid.vy = boid.vy + (close_dy * avoidfactor);
 
 
-                // TODO: remove the debug breaks after you finish
-                // Limit the boid within screen bounds
-                if(newPosition.Y > ScreenHeight) newPosition.Y = 0;
-                if(newPosition.Y < 0) newPosition.Y = ScreenHeight;
-                if(newPosition.X < 0) newPosition.X = ScreenWidth;
-                if(newPosition.X > ScreenWidth) newPosition.X = 0;
+                // If the boid is near an edge, make it turn by turnfactor
+                // (this describes a box, will vary based on boundary conditions)
+                if(boid.y < margin)
+                    boid.vy = boid.vy + turnfactor;
+                if(boid.x > ScreenWidth - margin)
+                    boid.vx = boid.vx - turnfactor;
+                if(boid.x < margin)
+                    boid.vx = boid.vx + turnfactor;
+                if(boid.y > ScreenHeight - margin)
+                    boid.vy = boid.vy - turnfactor;
 
-                //if(newPosition.Y > ScreenHeight + 20) Debugger.Break();
-                //if(newPosition.Y < -20) Debugger.Break();
-                //if(newPosition.X < -20) Debugger.Break();
-                //if(newPosition.X > ScreenWidth + 20) Debugger.Break();
 
+                // Calculate the boid's speed
+                // Slow step! Lookup the "alpha max plus beta min" algorithm
+                var speed = Math.Sqrt(boid.vx * boid.vx + boid.vy * boid.vy);
 
-                // Set new position of boid
-                boid.Position = newPosition;
+                // Enforce min and max speeds
+                if(speed < minspeed)
+                {
+                    if(speed == 0)
+                    {
+                        boid.vx = 1;
+                        boid.vy = 1;
+                    }
+                    else
+                    {
+                        boid.vx = boid.vx * (minspeed / speed);
+                        boid.vy = (boid.vy / speed) * minspeed;
+                    }
+                }
+
+                if(speed > maxspeed)
+                {
+                    boid.vx = (boid.vx / speed) * maxspeed;
+                    boid.vy = (boid.vy / speed) * maxspeed;
+                }
+
+                // Update boid's position
+                boid.x = boid.x + boid.vx;
+                boid.y = boid.y + boid.vy;
             }
-        }
-    }
-
-    /// <summary>
-    /// Makes the boid avoid the edges of the screen and turn to a different direction to avoid hitting the edge
-    /// </summary>
-    /// <param name="boid">The boid to update heading angle to avoid the obstacle</param>
-    private void AddEdgeAvoidance(Boid boid)
-    {
-        // The distance from the screen edge before we turn
-        var offset = 30;
-
-        // The angle at which we will turn each frame
-        var additionValue = 0.3;
-
-        // Get the direction we are heading to modulus 2 PI
-        var heading = boid.HeadingAngle % (2 * Math.PI);
-
-        // Whether we are heading to the right
-        var headingRight = (heading >= -Math.PI / 2d && heading <= Math.PI / 2d) || heading <= -3d / 2d * Math.PI || heading >= 3d / 2d * Math.PI;
-
-        // Whether we are heading to the left
-        var headingLeft = (heading > Math.PI / 2d && heading < Math.PI * 3d / 2d) || (heading > -3d / 2d * Math.PI && heading < -Math.PI / 2d);
-
-        // Whether we are heading to the bottom
-        var headingDown = (heading >= 0 && heading <= Math.PI) || (heading >= -2d * Math.PI && heading <= -Math.PI);
-
-        // Whether we are heading to the top
-        var headingUp = (heading < 0 && heading > -Math.PI) || (heading > Math.PI && heading < 2d * Math.PI);
-
-        // If we are close to the right edge and heading right
-        if(boid.Position.X + offset >= ScreenWidth && headingRight)
-        {    // If we are heading to the bottom
-            if(headingDown)
-                // Turn to the bottom
-                boid.HeadingAngle += additionValue;
-
-            // Otherwise...
-            else
-                // Turn towards the top
-                boid.HeadingAngle -= additionValue;
-        }
-        // Otherwise if we are close to the left edge and heading left
-        else if(boid.Position.X - offset <= 0 && headingLeft)
-        {   // If we are heading to the top
-            if(!headingDown)
-                // Turn toward the top
-                boid.HeadingAngle += additionValue;
-
-            // Otherwise...
-            else
-                // Turn toward the bottom
-                boid.HeadingAngle -= additionValue;
-
-        }
-        // Otherwise if we are close to the bottom edge and heading down
-        else if(boid.Position.Y + offset >= ScreenHeight && headingDown)
-        {
-            // If we are heading right
-            if(headingRight)
-                // Turn toward the right
-                boid.HeadingAngle -= additionValue;
-
-            // Otherwise...
-            else
-                // Turn toward the left
-                boid.HeadingAngle += additionValue;
-        }
-        // Otherwise if we are close to the top edge and heading up
-        else if(boid.Position.Y - offset < 0 && headingUp)
-        {
-            // If we are heading left
-            if(!headingRight)
-                // Turn toward the left
-                boid.HeadingAngle -= additionValue;
-
-            // Otherwise...
-            else
-                // Turn to the right
-                boid.HeadingAngle += additionValue;
-        }
     }
 
     #endregion
