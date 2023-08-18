@@ -234,8 +234,8 @@ public partial class MainWindow : Window, IDisposable, INotifyPropertyChanged
                 list.Add(newShape);
 
                 // Set it's position
-                Canvas.SetLeft(newShape, shape.ReferenceBoid.x);
-                Canvas.SetTop(newShape, shape.ReferenceBoid.y);
+                Canvas.SetLeft(newShape, shape.ReferenceBoid.X);
+                Canvas.SetTop(newShape, shape.ReferenceBoid.Y);
 
                 // Add it to the canvas
                 canvas.Children.Add(newShape);

@@ -23,11 +23,6 @@ public class Boids : IDisposable
     #region Private Members
 
     /// <summary>
-    /// The velocity of the boids
-    /// </summary>
-    private Vector2 mBoidVelocity = new Vector2(4);
-
-    /// <summary>
     /// The timer that will run a function every time an interval elapses
     /// </summary>
     private System.Timers.Timer? mTimer;
@@ -57,7 +52,7 @@ public class Boids : IDisposable
         // Set the draw method
         mDrawImplementation = draw;
 
-        for(int i = 0; i < 100; i++)
+        for(int i = 0; i < 30; i++)
         {
             mBoids.Add(new(new(
                     Random.Shared.Next(ScreenWidth),
@@ -164,8 +159,8 @@ public class Boids : IDisposable
 
 
                     // Compute differences in x and y coordinates
-                    var dx = boid.x - otherboid.x;
-                    var dy = boid.y - otherboid.y;
+                    var dx = boid.X - otherboid.X;
+                    var dy = boid.Y - otherboid.Y;
 
                     // Are both those differences less than the visual range?
                     if(Math.Abs(dx) < visual_range && Math.Abs(dy) < visual_range)
@@ -179,18 +174,18 @@ public class Boids : IDisposable
                         {
 
                             // If so, calculate difference in x/y-coordinates to nearfield boid
-                            close_dx += boid.x - otherboid.x;
-                            close_dy += boid.y - otherboid.y;
+                            close_dx += boid.X - otherboid.X;
+                            close_dy += boid.Y - otherboid.Y;
                         }
                         // If not in protected range, is the boid in the visual range?
                         else if(squared_distance < visual_range_squared)
                         {
 
                             // Add other boid's x/y-coord and x/y vel to accumulator variables
-                            xpos_avg += otherboid.x;
-                            ypos_avg += otherboid.y;
-                            xvel_avg += otherboid.vx;
-                            yvel_avg += otherboid.vy;
+                            xpos_avg += otherboid.X;
+                            ypos_avg += otherboid.Y;
+                            xvel_avg += otherboid.VelocityX;
+                            yvel_avg += otherboid.VelocityY;
 
                             // Increment number of boids within visual range
                             neighboring_boids += 1;
@@ -213,60 +208,66 @@ public class Boids : IDisposable
                     yvel_avg = yvel_avg / neighboring_boids;
 
                     // Add the centering/matching contributions to velocity
-                    boid.vx = (boid.vx +
-                               (xpos_avg - boid.x) * centering_factor +
-                               (xvel_avg - boid.vx) * matching_factor);
+                    boid.VelocityX = (boid.VelocityX +
+                               (xpos_avg - boid.X) * centering_factor +
+                               (xvel_avg - boid.VelocityX) * matching_factor);
 
-                    boid.vy = (boid.vy +
-                               (ypos_avg - boid.y) * centering_factor +
-                               (yvel_avg - boid.vy) * matching_factor);
+                    boid.VelocityY = (boid.VelocityY +
+                               (ypos_avg - boid.Y) * centering_factor +
+                               (yvel_avg - boid.VelocityY) * matching_factor);
                 }
 
                 // Add the avoidance contribution to velocity
-                boid.vx = boid.vx + (close_dx * avoidfactor);
-                boid.vy = boid.vy + (close_dy * avoidfactor);
+                boid.VelocityX = boid.VelocityX + (close_dx * avoidfactor);
+                boid.VelocityY = boid.VelocityY + (close_dy * avoidfactor);
 
 
                 // If the boid is near an edge, make it turn by turnfactor
                 // (this describes a box, will vary based on boundary conditions)
-                if(boid.y < margin)
-                    boid.vy = boid.vy + turnfactor;
-                if(boid.x > ScreenWidth - margin)
-                    boid.vx = boid.vx - turnfactor;
-                if(boid.x < margin)
-                    boid.vx = boid.vx + turnfactor;
-                if(boid.y > ScreenHeight - margin)
-                    boid.vy = boid.vy - turnfactor;
+                if(boid.Y < margin)
+                    boid.VelocityY = boid.VelocityY + turnfactor;
+                if(boid.X > ScreenWidth - margin)
+                    boid.VelocityX = boid.VelocityX - turnfactor;
+                if(boid.X < margin)
+                    boid.VelocityX = boid.VelocityX + turnfactor;
+                if(boid.Y > ScreenHeight - margin)
+                    boid.VelocityY = boid.VelocityY - turnfactor;
 
 
                 // Calculate the boid's speed
                 // Slow step! Lookup the "alpha max plus beta min" algorithm
-                var speed = Math.Sqrt(boid.vx * boid.vx + boid.vy * boid.vy);
+                var speed = Math.Sqrt(boid.VelocityX * boid.VelocityX + boid.VelocityY * boid.VelocityY);
 
                 // Enforce min and max speeds
                 if(speed < minspeed)
                 {
                     if(speed == 0)
                     {
-                        boid.vx = 1;
-                        boid.vy = 1;
+                        boid.VelocityX = 1;
+                        boid.VelocityY = 1;
                     }
                     else
                     {
-                        boid.vx = boid.vx * (minspeed / speed);
-                        boid.vy = (boid.vy / speed) * minspeed;
+                        boid.VelocityX = boid.VelocityX * (minspeed / speed);
+                        boid.VelocityY = (boid.VelocityY / speed) * minspeed;
                     }
                 }
 
                 if(speed > maxspeed)
                 {
-                    boid.vx = (boid.vx / speed) * maxspeed;
-                    boid.vy = (boid.vy / speed) * maxspeed;
+                    boid.VelocityX = (boid.VelocityX / speed) * maxspeed;
+                    boid.VelocityY = (boid.VelocityY / speed) * maxspeed;
                 }
 
                 // Update boid's position
-                boid.x = boid.x + boid.vx;
-                boid.y = boid.y + boid.vy;
+                boid.X = boid.X + boid.VelocityX;
+                boid.Y = boid.Y + boid.VelocityY;
+
+                // Rotate the boid to the correct direction
+                boid.Rotate(Math.Atan2(boid.VelocityY, boid.VelocityX));
+
+
+                
             }
     }
 

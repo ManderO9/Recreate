@@ -5,18 +5,7 @@ namespace Recreate.Core;
 
 public class Boid
 {
-
-    public double vx;
-    public double vy;
-    public double x;
-    public double y;
-
     #region Private Members
-
-    /// <summary>
-    /// The angle the boid is heading toward
-    /// </summary>
-    private double mHeadingAngle = 0;
 
     /// <summary>
     /// The size of this boid
@@ -58,29 +47,10 @@ public class Boid
     /// </summary>
     public Color Color { get; set; }
 
-    ///// <summary>
-    ///// The position of this boid
-    ///// </summary>
-    //public Vector2 Position { get; set; }
-
-    /// <summary>
-    /// The angle the boid is heading toward
-    /// </summary>
-    public double HeadingAngle
-    {
-        set
-        {
-            // Rotate the boid the provided value
-            Rotate(value);
-            mHeadingAngle = value;
-        }
-        get => mHeadingAngle;
-    }
-
     /// <summary>
     /// The head of the boid
     /// </summary>
-    public Vector2 HeadPoint { get; private set; } 
+    public Vector2 HeadPoint { get; private set; }
 
     /// <summary>
     /// The left wing of the boid
@@ -90,12 +60,32 @@ public class Boid
     /// <summary>
     /// The right wing of the boid
     /// </summary>
-    public Vector2 RightWingPoint { get; private set; } 
+    public Vector2 RightWingPoint { get; private set; }
 
     /// <summary>
     /// The point that will create the emptiness in the back of the boid
     /// </summary>
     public Vector2 StomachPoint { get; private set; }
+
+    /// <summary>
+    /// The x velocity of the boid
+    /// </summary>
+    public double VelocityX { get; set; }
+
+    /// <summary>
+    /// The y velocity of the boid
+    /// </summary>
+    public double VelocityY { get; set; }
+
+    /// <summary>
+    /// The current x position of the boid according to the screen
+    /// </summary>
+    public double X { get; set; }
+
+    /// <summary>
+    /// The current y position of the boid according to the screen
+    /// </summary>
+    public double Y { get; set; }
 
     #endregion
 
@@ -112,13 +102,8 @@ public class Boid
         Color = color;
 
         // Set the position of the boid
-        //Position = position;
-        x = position.X;
-        y = position.Y;
-
-
-        // Set angle of boid
-        HeadingAngle = initialAngle;
+        X = position.X;
+        Y = position.Y;
 
         // Initiate properties
         HeadPoint = mHead;
@@ -132,13 +117,13 @@ public class Boid
 
     #endregion
 
-    #region Private Helpers
+    #region Public Methods
 
     /// <summary>
     /// Rotates the boid according to an angle
     /// </summary>
     /// <param name="angle">The angle that the boid will get rotated by</param>
-    private void Rotate(double angle)
+    public void Rotate(double angle)
     {
         // Make the boid point to the right when the angle is equal to 0
         angle = angle - Math.PI / 2;
@@ -149,6 +134,10 @@ public class Boid
         RightWingPoint = RotatePoint(mRightWing, mCenter, angle);
         StomachPoint = RotatePoint(mStomach, mCenter, angle);
     }
+
+    #endregion
+
+    #region Private Helpers
 
     /// <summary>
     /// Rotates a point according to an angle around a center point

@@ -52,8 +52,8 @@ public partial class Boids
                 RightWingPointY = x.RightWingPoint.Y,
                 StomachPointX = x.StomachPoint.X,
                 StomachPointY = x.StomachPoint.Y,
-                PositionX = x.Position.X,
-                PositionY = x.Position.Y,
+                PositionX = x.X,
+                PositionY = x.Y,
             }));
     }
 

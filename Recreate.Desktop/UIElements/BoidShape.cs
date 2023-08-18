@@ -54,8 +54,8 @@ public class BoidShape
         Polygon.Points.Add(new Point(ReferenceBoid.RightWingPoint.X, ReferenceBoid.RightWingPoint.Y));
 
         //// Set the polygon position
-        Canvas.SetLeft(Polygon, ReferenceBoid.x);
-        Canvas.SetTop(Polygon, ReferenceBoid.y);
+        Canvas.SetLeft(Polygon, ReferenceBoid.X);
+        Canvas.SetTop(Polygon, ReferenceBoid.Y);
 
     }
 
