@@ -4,18 +4,39 @@
 @namespace Recreate.Web
 @using System.Drawing;
 
-<h3>Boids</h3>
-
-<canvas id="boids-canvas" 
-    @onclick="(e)=>
-    {
-        mBoidsRuntime.AddBoid((float)e.OffsetX,
-            (float) e.OffsetY,
-            Random.Shared.NextSingle()*2*Math.PI,
-            Color.FromArgb(255,Random.Shared.Next(256),Random.Shared.Next(256),Random.Shared.Next(256)));
-    }" 
-    width="@Recreate.Core.Boids.ScreenWidth" height="@Recreate.Core.Boids.ScreenHeight">
-</canvas>
 
 
+
+<div class="boids page">
+    <h2>Boids</h2>
+    <div>
+        <p>
+            Click with your mouse inside the rectangle to insert new boids.
+            You can select which color you want them to be, and delete them all by clicking reset.
+        </p>
+    </div>
+
+    <div class="buttons">
+        <input type="color" @bind-value="mNewBoidColor" />
+        <button @onclick="Reset" class="button button-primary">
+            Reset
+        </button>
+    </div>
+
+    <canvas id="boids-canvas"
+            @onclick="(e)=>
+        {
+            // Get color
+            var color = ColorTranslator.FromHtml(mNewBoidColor);
+
+            // Add a new boid
+            mBoidsRuntime.AddBoid((float)e.OffsetX,
+                (float) e.OffsetY,
+                Random.Shared.NextSingle()*2*Math.PI,
+                color);
+        }"
+            width="@Recreate.Core.Boids.ScreenWidth" height="@Recreate.Core.Boids.ScreenHeight">
+    </canvas>
+
+</div>
 

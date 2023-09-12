@@ -92,15 +92,15 @@ p {
     margin: $spacing-normal $spacing-large;
 }
 
-// Random walkers page
-.random-walkers {
+// Styles of pages
+.page {
     padding-bottom: $spacing-largest*4;
     padding-top: $spacing-normal;
 
     > div {
         padding: 0 $spacing-large;
     }
-    // Control buttons
+
     > .buttons {
         margin-bottom: $spacing-large;
         margin-right: $spacing-large;
@@ -109,7 +109,13 @@ p {
         > button {
             margin-right: $spacing-normal;
         }
+    }
+}
 
+// Random walkers page
+.random-walkers {
+    // Control buttons
+    > .buttons {
         > select {
             background: $color-dark;
             border: 1px solid $color-light;
@@ -130,6 +136,38 @@ p {
 }
 
 
+// Boids page
+.boids {
+    // Control buttons
+    > .buttons {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+
+        > input[type=color] {
+            box-sizing: border-box;
+            width: $spacing-largest;
+            height: $spacing-large;
+            border: none;
+            cursor: pointer;
+            margin: 0 $spacing-large 0 0;
+
+            &::-webkit-color-swatch-wrapper {
+                padding: 0;
+            }
+
+            &::-webkit-color-swatch {
+                border: none;
+            }
+        }
+    }
+    // Canvas
+    > #boids-canvas {
+        image-rendering: pixelated;
+        image-rendering: optimizeSpeed;
+        margin-left: $spacing-large;
+    }
+}
 // Button styles
 .button {
     padding: $spacing-small $spacing-normal;
@@ -137,25 +175,21 @@ p {
     border-radius: $spacing-smaller;
     text-shadow: 1px 1px 2px $color-dark;
 }
-
 // Primary button
 .button-primary {
     background-color: $color-primary;
     color: $color-lighter;
 }
-
 // Secondary button
 .button-secondary {
     background-color: $color-secondary;
     color: $color-lighter;
 }
-
 // Accent button
 .button-accent {
     background-color: $color-accent;
     color: $color-lighter;
 }
-
 // Home page
 .home-page {
     > img {
@@ -169,7 +203,7 @@ p {
         top: $spacing-large;
         left: calc($navbar-width + $spacing-largest);
         z-index: 2;
-        font-size:xx-large;
-        text-shadow:1px 1px 4px $color-lighter;
+        font-size: xx-large;
+        text-shadow: 1px 1px 4px $color-lighter;
     }
 }

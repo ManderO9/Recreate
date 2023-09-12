@@ -52,11 +52,11 @@ public class Boids : IDisposable
         // Set the draw method
         mDrawImplementation = draw;
 
-        for(int i = 0; i < 30; i++)
+        for(int i = 0; i < 10; i++)
         {
             mBoids.Add(new(new(
-                    Random.Shared.Next(ScreenWidth),
-                    Random.Shared.Next(ScreenHeight)),
+                Random.Shared.Next(ScreenWidth),
+                Random.Shared.Next(ScreenHeight)),
 
                 //ScreenWidth / 2,
                 //ScreenHeight / 2),
@@ -106,15 +106,18 @@ public class Boids : IDisposable
         return boid;
     }
 
-    #endregion
-
-    #region Public Properties
-
-    public bool AlignmentEnabled { get; set; } = true;
-    public bool LongDistanceAttractionEnabled { get; set; } = true;
-    public bool ShortDistanceSeparationEnabled { get; set; } = true;
-    public bool EdgeAvoidanceEnabled { get; set; } = true;
-    public bool MovementRandomnessEnabled { get; set; } = true;
+    /// <summary>
+    /// Deletes all the boids and resets the canvas to clean state
+    /// </summary>
+    public void Reset()
+    {
+        // Lock the list
+        lock(mBoids)
+        {
+            // Clear it
+            mBoids.Clear();
+        }
+    }
 
     #endregion
 
@@ -133,7 +136,7 @@ public class Boids : IDisposable
         double centering_factor = 0.0005;
         double matching_factor = 0.05;
         double avoidfactor = 0.05;
-        double turnfactor = 0.2;
+        double turnfactor = 0.3;
 
         var margin = 200;
 

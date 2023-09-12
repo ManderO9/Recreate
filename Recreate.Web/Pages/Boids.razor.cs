@@ -19,6 +19,11 @@ public partial class Boids
     /// </summary>
     private Core.Boids mBoidsRuntime = new();
 
+    /// <summary>
+    /// The color of the new boid that we are gonna insert when we click
+    /// </summary>
+    private string mNewBoidColor = "#fe1874";
+
     #endregion
 
     #region Lifecycle Methods
@@ -38,6 +43,11 @@ public partial class Boids
 
     private async Task Draw(List<Boid> boids)
     {
+        // If the module has not loaded yet
+        if(mJSModule is null)
+            // Don't do anything
+            return;
+
         // Call the javascript method passing in the pixels array
         await mJSModule.InvokeVoidAsync("drawImage",
             boids.Select(x =>
@@ -56,6 +66,8 @@ public partial class Boids
                 PositionY = x.Y,
             }));
     }
+
+    private void Reset() => mBoidsRuntime.Reset();
 
     #endregion
 
