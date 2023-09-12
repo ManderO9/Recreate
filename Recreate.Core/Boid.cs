@@ -105,6 +105,10 @@ public class Boid
         X = position.X;
         Y = position.Y;
 
+        // Set initial direction of the boid
+        VelocityX = Math.Cos(initialAngle);
+        VelocityY = Math.Sin(initialAngle);
+
         // Initiate properties
         HeadPoint = mHead;
         LeftWingPoint = mLeftWing;

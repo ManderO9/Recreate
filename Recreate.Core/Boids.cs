@@ -52,19 +52,15 @@ public class Boids : IDisposable
         // Set the draw method
         mDrawImplementation = draw;
 
+        // Add a couple of boids
         for(int i = 0; i < 10; i++)
         {
             mBoids.Add(new(new(
                 Random.Shared.Next(ScreenWidth),
                 Random.Shared.Next(ScreenHeight)),
-
-                //ScreenWidth / 2,
-                //ScreenHeight / 2),
                 Random.Shared.NextSingle() * 2 * Math.PI,
                 Color.FromArgb(255, 197, 66, 245)));
         }
-
-        //mBoids.Add(new(new(ScreenWidth / 2, ScreenHeight / 2), -Math.PI / 2, Color.FromArgb(255, 197, 66, 245)));
 
         // Initiate the timer
         mTimer = new();
@@ -128,17 +124,17 @@ public class Boids : IDisposable
     /// </summary>
     private void Update()
     {
-        double minspeed = 3;
-        double maxspeed = 6;
-        double visual_range = 40;
-        double protected_range_squared = 8*8;
-        double visual_range_squared = 40*40;
-        double centering_factor = 0.0005;
-        double matching_factor = 0.05;
-        double avoidfactor = 0.05;
-        double turnfactor = 0.3;
+        const double minspeed = 3;
+        const double maxspeed = 6;
+        const double visual_range = 40;
+        const double protected_range_squared = 8 * 8;
+        const double visual_range_squared = visual_range * visual_range;
+        const double centering_factor = 0.0005;
+        const double matching_factor = 0.05;
+        const double avoidfactor = 0.05;
+        const double turnfactor = 0.2;
 
-        var margin = 200;
+        var margin = 150;
 
         lock(mBoids)
 
@@ -228,14 +224,50 @@ public class Boids : IDisposable
                 // If the boid is near an edge, make it turn by turnfactor
                 // (this describes a box, will vary based on boundary conditions)
                 if(boid.Y < margin)
+                {
                     boid.VelocityY = boid.VelocityY + turnfactor;
+                    if(boid.VelocityX <= 0)
+                        boid.VelocityX -= 0.1;
+                    else
+                        boid.VelocityX += 0.1;
+
+                }
+
                 if(boid.X > ScreenWidth - margin)
+                {
                     boid.VelocityX = boid.VelocityX - turnfactor;
+                    
+                    if(!(boid.Y < margin || boid.Y > ScreenHeight - margin))
+                        
+                        if(boid.VelocityY <= 0)
+                            boid.VelocityY -= 0.1;
+                        else 
+                            boid.VelocityY += 0.1;
+
+                }
+
                 if(boid.X < margin)
+                {
                     boid.VelocityX = boid.VelocityX + turnfactor;
+
+                    if(!(boid.Y < margin || boid.Y > ScreenHeight - margin))
+
+                        if(boid.VelocityY <= 0)
+                            boid.VelocityY -= 0.1;
+                        else
+                            boid.VelocityY += 0.1;
+
+                }
+
                 if(boid.Y > ScreenHeight - margin)
+                {
                     boid.VelocityY = boid.VelocityY - turnfactor;
 
+                    if(boid.VelocityX <= 0)
+                        boid.VelocityX -= 0.1;
+                    else
+                        boid.VelocityX += 0.1;
+                }
 
                 // Calculate the boid's speed
                 // Slow step! Lookup the "alpha max plus beta min" algorithm
@@ -263,14 +295,14 @@ public class Boids : IDisposable
                 }
 
                 // Update boid's position
-                boid.X = boid.X + boid.VelocityX;
-                boid.Y = boid.Y + boid.VelocityY;
+                boid.X = double.Clamp(boid.X + boid.VelocityX, 0, ScreenWidth);
+                boid.Y = double.Clamp(boid.Y + boid.VelocityY, 0, ScreenHeight);
 
                 // Rotate the boid to the correct direction
                 boid.Rotate(Math.Atan2(boid.VelocityY, boid.VelocityX));
 
 
-                
+
             }
     }
 
