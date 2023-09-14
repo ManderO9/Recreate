@@ -48,11 +48,6 @@ public partial class MainWindow : Window, IDisposable, INotifyPropertyChanged
     /// </summary>
     private List<BoidShape>? mBoidShapes;
 
-    /// <summary>
-    /// A list containing older values of boid position to add a trail to the boids
-    /// </summary>
-    private Queue<List<Polygon>> mOlderBoids = new();
-
     #endregion
 
     #region Constructor
@@ -140,60 +135,12 @@ public partial class MainWindow : Window, IDisposable, INotifyPropertyChanged
         // Otherwise...
         else
         {
-            // Create a list that will contain the current values of boid position to add the to 
-            // the older boids list, that will be used to create the trail behind boids
-            var list = new List<Polygon>();
-
             // For each shape in the boid shapes
             foreach(var shape in mBoidShapes)
             {
                 // Update it's position
                 shape.UpdatePosition();
-
-                // Create a new polygon using the current points of the boid
-                var newShape = new Polygon()
-                {
-                    Fill = new SolidColorBrush(Color.FromArgb(
-                        shape.ReferenceBoid.Color.A,
-                        shape.ReferenceBoid.Color.R,
-                        shape.ReferenceBoid.Color.G,
-                        shape.ReferenceBoid.Color.B)),
-                    Points = new(shape.Polygon.Points)
-                };
-
-                // Add the new polygon to the list of shapes
-                list.Add(newShape);
-
-                // Set it's position
-                Canvas.SetLeft(newShape, shape.ReferenceBoid.X);
-                Canvas.SetTop(newShape, shape.ReferenceBoid.Y);
-
-                // Add it to the canvas
-                canvas.Children.Add(newShape);
             }
-
-            // Add the current values of boid positions to the list of old values
-            mOlderBoids.Enqueue(list);
-
-            // If the count of old values is greater than 5
-            if(mOlderBoids.Count > 5)
-            {
-                // Remove the first element
-                var toDelete = mOlderBoids.Dequeue();
-
-                // For each item in the list to delete
-                foreach(var element in toDelete)
-                {
-                    // Remove it from the canvas
-                    canvas.Children.Remove(element);
-                }
-            }
-
-            // For each old value of the boids positions
-            foreach(var olderBoids in mOlderBoids)
-                foreach(var item in olderBoids)
-                    // Give it less opacity
-                    item.Fill.Opacity -= 0.3;
         }
     }
 

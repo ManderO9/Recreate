@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Numerics;
 
 namespace Recreate.Core;
@@ -124,186 +123,214 @@ public class Boids : IDisposable
     /// </summary>
     private void Update()
     {
-        const double minspeed = 3;
-        const double maxspeed = 6;
-        const double visual_range = 40;
-        const double protected_range_squared = 8 * 8;
-        const double visual_range_squared = visual_range * visual_range;
-        const double centering_factor = 0.0005;
-        const double matching_factor = 0.05;
-        const double avoidfactor = 0.05;
-        const double turnfactor = 0.2;
+        // This code was taken from here:
+        // https://vanhunteradams.com/Pico/Animal_Movement/Boids-algorithm.html
+        // Check the website for more explanations of what it does
 
-        var margin = 150;
+        // The minimum speed a boid can have
+        const double minSpeed = 3;
 
+        // The maximum speed a boid can have
+        const double maxSpeed = 6;
+
+        // The range at which boids can interact with each other
+        const double visualRange = 40;
+
+        // The range at which the boids are too close and should separate from each other
+        const double protectedRangeSquared = 8 * 8;
+
+        // The square of the visual range
+        const double visualRangeSquared = visualRange * visualRange;
+
+        // The factor at which boids will head toward the center of their neighbors
+        const double centeringFactor = 0.0005;
+
+        // The factor at which boids will match the heading direction of neighboring boids
+        const double matchingFactor = 0.05;
+
+        // The factor at which boids will avoid colliding with each other
+        const double avoidFactor = 0.05;
+
+        // The factor at which boids will move away from the edges of the screen
+        const double turnFactor = 0.2;
+
+        // The margin from the edges of the screen at which boids will start moving away from the edge
+        const double margin = 150;
+
+        // Lock the boids list
         lock(mBoids)
-
+        {
+            // For each boid
             foreach(var boid in mBoids)
             {
+                // Zero all accumulator variables
+                double xPositionAvg = 0,
+                    yPositionAvg = 0,
+                    xVelocityAvg = 0,
+                    yVelocityAvg = 0,
+                    neighboringBoids = 0,
+                    closeDx = 0,
+                    closeDy = 0;
 
-                // Zero all accumulator variables (can't do this in one line in C)
-                double xpos_avg = 0,
-                    ypos_avg = 0,
-                    xvel_avg = 0,
-                    yvel_avg = 0,
-                    neighboring_boids = 0,
-                    close_dx = 0,
-                    close_dy = 0;
-
-                // For every other boid in the flock . . .
-                foreach(var otherboid in mBoids)
+                // For every other boid in the flock ...
+                foreach(var otherBoid in mBoids)
                 {
-                    if(otherboid == boid)
+                    // If the boids is the same as the current one
+                    if(otherBoid == boid)
+                        // Skip it
                         continue;
 
+                    // Compute differences in x and y coordinates between the two boids
+                    var dx = boid.X - otherBoid.X;
+                    var dy = boid.Y - otherBoid.Y;
 
-                    // Compute differences in x and y coordinates
-                    var dx = boid.X - otherboid.X;
-                    var dy = boid.Y - otherboid.Y;
-
-                    // Are both those differences less than the visual range?
-                    if(Math.Abs(dx) < visual_range && Math.Abs(dy) < visual_range)
+                    // If both those differences are less than the visual range
+                    if(Math.Abs(dx) < visualRange && Math.Abs(dy) < visualRange)
                     {
 
-                        // If so, calculate the squared distance
-                        var squared_distance = dx * dx + dy * dy;
+                        // Calculate the squared distance
+                        var squaredDistance = dx * dx + dy * dy;
 
-                        // Is squared distance less than the protected range?
-                        if(squared_distance < protected_range_squared)
+                        // If the squared distance is less than the protected range
+                        if(squaredDistance < protectedRangeSquared)
                         {
-
-                            // If so, calculate difference in x/y-coordinates to nearfield boid
-                            close_dx += boid.X - otherboid.X;
-                            close_dy += boid.Y - otherboid.Y;
+                            // Add the close neighbor dx and dy to the accumulators
+                            closeDx += dx;
+                            closeDy += dy;
                         }
-                        // If not in protected range, is the boid in the visual range?
-                        else if(squared_distance < visual_range_squared)
+                        // Otherwise, is the boid in the visual range
+                        else if(squaredDistance < visualRangeSquared)
                         {
-
-                            // Add other boid's x/y-coord and x/y vel to accumulator variables
-                            xpos_avg += otherboid.X;
-                            ypos_avg += otherboid.Y;
-                            xvel_avg += otherboid.VelocityX;
-                            yvel_avg += otherboid.VelocityY;
+                            // Add other x/y coordinates and velocity to accumulators
+                            xPositionAvg += otherBoid.X;
+                            yPositionAvg += otherBoid.Y;
+                            xVelocityAvg += otherBoid.VelocityX;
+                            yVelocityAvg += otherBoid.VelocityY;
 
                             // Increment number of boids within visual range
-                            neighboring_boids += 1;
+                            neighboringBoids += 1;
                         }
 
                     }
                 }
 
-
-
-
-                // If there were any boids in the visual range . . .            
-                if(neighboring_boids > 0)
+                // If there were any boids in the visual range ...            
+                if(neighboringBoids > 0)
                 {
-
                     // Divide accumulator variables by number of boids in visual range
-                    xpos_avg = xpos_avg / neighboring_boids;
-                    ypos_avg = ypos_avg / neighboring_boids;
-                    xvel_avg = xvel_avg / neighboring_boids;
-                    yvel_avg = yvel_avg / neighboring_boids;
+                    xPositionAvg /= neighboringBoids;
+                    yPositionAvg /= neighboringBoids;
+                    xVelocityAvg /= neighboringBoids;
+                    yVelocityAvg /= neighboringBoids;
 
                     // Add the centering/matching contributions to velocity
                     boid.VelocityX = (boid.VelocityX +
-                               (xpos_avg - boid.X) * centering_factor +
-                               (xvel_avg - boid.VelocityX) * matching_factor);
+                               (xPositionAvg - boid.X) * centeringFactor +
+                               (xVelocityAvg - boid.VelocityX) * matchingFactor);
 
                     boid.VelocityY = (boid.VelocityY +
-                               (ypos_avg - boid.Y) * centering_factor +
-                               (yvel_avg - boid.VelocityY) * matching_factor);
+                               (yPositionAvg - boid.Y) * centeringFactor +
+                               (yVelocityAvg - boid.VelocityY) * matchingFactor);
                 }
 
                 // Add the avoidance contribution to velocity
-                boid.VelocityX = boid.VelocityX + (close_dx * avoidfactor);
-                boid.VelocityY = boid.VelocityY + (close_dy * avoidfactor);
+                boid.VelocityX = boid.VelocityX + (closeDx * avoidFactor);
+                boid.VelocityY = boid.VelocityY + (closeDy * avoidFactor);
 
 
-                // If the boid is near an edge, make it turn by turnfactor
-                // (this describes a box, will vary based on boundary conditions)
+                // If the boid is near the top edge
                 if(boid.Y < margin)
                 {
-                    boid.VelocityY = boid.VelocityY + turnfactor;
+                    // Add the turn factor to the y velocity
+                    boid.VelocityY = boid.VelocityY + turnFactor;
+
+                    // If the x velocity is null or negative
                     if(boid.VelocityX <= 0)
+                        // Decrease it
                         boid.VelocityX -= 0.1;
+                    // Otherwise...
                     else
+                        // Increase it
                         boid.VelocityX += 0.1;
 
                 }
-
+                // If the boid is near the right edge
                 if(boid.X > ScreenWidth - margin)
                 {
-                    boid.VelocityX = boid.VelocityX - turnfactor;
-                    
+                    // Add the turn factor to the x velocity
+                    boid.VelocityX = boid.VelocityX - turnFactor;
+
+                    // If the boid is not near the top or the bottom edge
                     if(!(boid.Y < margin || boid.Y > ScreenHeight - margin))
-                        
+                        // If the y velocity is null or negative
                         if(boid.VelocityY <= 0)
+                            // Decrease it
                             boid.VelocityY -= 0.1;
-                        else 
+                        // Otherwise...
+                        else
+                            // Increase it
                             boid.VelocityY += 0.1;
 
                 }
 
+                // If the boid is near the left edge
                 if(boid.X < margin)
                 {
-                    boid.VelocityX = boid.VelocityX + turnfactor;
+                    // Add the turn factor to the x velocity
+                    boid.VelocityX = boid.VelocityX + turnFactor;
 
+                    // If the boid is not near the top or the bottom edge
                     if(!(boid.Y < margin || boid.Y > ScreenHeight - margin))
-
+                        // If the y velocity is null or negative
                         if(boid.VelocityY <= 0)
+                            // Decrease it
                             boid.VelocityY -= 0.1;
+                        // Otherwise...
                         else
+                            // Increase it
                             boid.VelocityY += 0.1;
 
                 }
 
+                // If the boid is near the bottom edge
                 if(boid.Y > ScreenHeight - margin)
                 {
-                    boid.VelocityY = boid.VelocityY - turnfactor;
+                    // Add the turn factor to the y velocity
+                    boid.VelocityY = boid.VelocityY - turnFactor;
 
+                    // If the x velocity is null or negative
                     if(boid.VelocityX <= 0)
+                        // Decrease it
                         boid.VelocityX -= 0.1;
+                    // Otherwise...
                     else
+                        // Increase it
                         boid.VelocityX += 0.1;
                 }
 
                 // Calculate the boid's speed
-                // Slow step! Lookup the "alpha max plus beta min" algorithm
                 var speed = Math.Sqrt(boid.VelocityX * boid.VelocityX + boid.VelocityY * boid.VelocityY);
 
                 // Enforce min and max speeds
-                if(speed < minspeed)
+                if(speed < minSpeed)
                 {
-                    if(speed == 0)
-                    {
-                        boid.VelocityX = 1;
-                        boid.VelocityY = 1;
-                    }
-                    else
-                    {
-                        boid.VelocityX = boid.VelocityX * (minspeed / speed);
-                        boid.VelocityY = (boid.VelocityY / speed) * minspeed;
-                    }
+                    boid.VelocityX = boid.VelocityX * (minSpeed / speed);
+                    boid.VelocityY = (boid.VelocityY / speed) * minSpeed;
                 }
-
-                if(speed > maxspeed)
+                if(speed > maxSpeed)
                 {
-                    boid.VelocityX = (boid.VelocityX / speed) * maxspeed;
-                    boid.VelocityY = (boid.VelocityY / speed) * maxspeed;
+                    boid.VelocityX = (boid.VelocityX / speed) * maxSpeed;
+                    boid.VelocityY = (boid.VelocityY / speed) * maxSpeed;
                 }
 
                 // Update boid's position
                 boid.X = double.Clamp(boid.X + boid.VelocityX, 0, ScreenWidth);
                 boid.Y = double.Clamp(boid.Y + boid.VelocityY, 0, ScreenHeight);
 
-                // Rotate the boid to the correct direction
+                // Rotate the boid to the correct direction so it will get displayed correctly on the screen
                 boid.Rotate(Math.Atan2(boid.VelocityY, boid.VelocityX));
-
-
-
             }
+        }
     }
 
     #endregion
