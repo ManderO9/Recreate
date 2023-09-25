@@ -207,3 +207,24 @@ p {
         text-shadow: 1px 1px 4px $color-lighter;
     }
 }
+
+
+.credits {
+    > div > h3 {
+        font-size: large;
+        color: $color-primary;
+        margin-left: $spacing-large;
+    }
+
+    > div > p {
+        margin-left: $spacing-larger;
+    }
+
+    > div > p:nth-child(1) {
+        margin-left: $spacing-large;
+    }
+
+    a:visited {
+        color: rgb(0, 102, 204);
+    }
+}
